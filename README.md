@@ -24,8 +24,20 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 ## bout project
 
 git clone https://github.com/fath-bot/arsip-berkas.git - cloning project to device
+
+
 composer install - install component in project
+
+
 *start MySql and Apache - make an service 
+
+
 php artisan migrate - database table migration
+
+
 php artisan db:seed - seeder of database
+
+
 php artisan serve - startup project
+
+
