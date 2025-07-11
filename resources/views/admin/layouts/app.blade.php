@@ -1,21 +1,7 @@
 <!DOCTYPE html>
-{{--
-	Author: Keenthemes
-	Product Name: Metronic
-	Product Version: 8.1.7
-	Purchase: https://1.envato.market/EA4JP
-	Website: http://www.keenthemes.com
-	Contact: support@keenthemes.com
-	Follow: www.twitter.com/keenthemes
-	Dribbble: www.dribbble.com/keenthemes
-	Like: www.facebook.com/keenthemes
-	License: For each use you must have a valid license purchased only from above link in order to legally use the theme for your project.
-	--}}
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme-mode="light">
-{{-- begin::Head --}}
 
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme-mode="light">
 <head>
-    <title>@yield('title') - {{ config('app.name') }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}" />
@@ -24,17 +10,20 @@
     <meta property="og:site_name" content="{{ config('app.name') }}" />
     <link rel="canonical" href="{{ route('home') }}" />
     <link rel="shortcut icon" href="{{ asset('ARSIP_KITA.ico') }}" />
-    {{-- begin::Fonts(mandatory for all pages) --}}
+    
+    <title>@yield('title') - {{ config('app.name') }}</title>
+    
+    <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    {{-- end::Fonts --}}
-    {{-- begin::Vendor Stylesheets(used for this page only) --}}
-    @yield('page_styles')
-    {{-- end::Vendor Stylesheets --}}
-    {{-- begin::Global Stylesheets Bundle(mandatory for all pages) --}}
+    
+    <!-- Global Stylesheets Bundle -->
     <link href="{{ asset('themes/admin/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('themes/admin/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
-    {{-- end::Global Stylesheets Bundle --}}
-    {{-- Begin::Google Tag Manager --}}
+    
+    <!-- Page Specific Styles -->
+    @yield('page_styles')
+    
+    <!-- Google Tag Manager -->
     <script>
         (function(w, d, s, l, i) {
             w[l] = w[l] || [];
@@ -46,19 +35,16 @@
                 j = d.createElement(s),
                 dl = l != 'dataLayer' ? '&l=' + l : '';
             j.async = true;
-            j.src =
-                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-5FS8GGP');
     </script>
-    {{-- End::Google Tag Manager --}}
 </head>
-{{-- end::Head --}}
-{{-- begin::Body --}}
 
 <body id="kt_body" class="header-fixed">
     @include('sweetalert::alert')
-    {{-- begin::Theme mode setup on page load --}}
+    
+    <!-- Theme mode setup -->
     <script>
         var defaultThemeMode = "light";
         var themeMode;
@@ -81,279 +67,145 @@
             document.documentElement.setAttribute("data-bs-theme", themeMode);
         }
     </script>
-    {{-- end::Theme mode setup on page load --}}
-    {{-- Begin::Google Tag Manager (noscript) --}}
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5FS8GGP" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-    {{-- End::Google Tag Manager (noscript) --}}
-    {{-- begin::Main --}}
-    {{-- begin::Root --}}
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5FS8GGP" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
     <div class="d-flex flex-column flex-root">
-        {{-- begin::Page --}}
+        <!-- Begin Page -->
         <div class="page d-flex flex-row flex-column-fluid">
-            {{-- begin::Aside --}}
-            <div id="kt_aside" class="aside py-9 " data-kt-drawer="true" data-kt-drawer-name="aside"
+            <!-- Begin Aside -->
+            <div id="kt_aside" class="aside py-9" data-kt-drawer="true" data-kt-drawer-name="aside"
                 data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
                 data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
                 data-kt-drawer-toggle="#kt_aside_toggle">
-                {{-- begin::Brand --}}
+                
+                <!-- Brand Logo -->
                 <div class="aside-logo flex-column-auto px-9 mb-9" id="kt_aside_logo">
-                    {{-- begin::Logo --}}
                     <a href="{{ route('admin.dashboard') }}">
-                        <img alt="Logo" src="{{ asset('images/logos/ARSIP KITA.png') }}"
-                            class="h-40px logo theme-light-show" />
-                        <img alt="Logo" src="{{ asset('images/logos/logo-white-2.png') }}"
-                            class="h-40px logo theme-dark-show" />
+                        <img alt="Logo" src="{{ asset('images/logos/ARSIP KITA.png') }}" class="h-40px logo theme-light-show" />
+                        <img alt="Logo" src="{{ asset('images/logos/logo-white-2.png') }}" class="h-40px logo theme-dark-show" />
                     </a>
-                    {{-- <a href="{{ route('admin.dashboard') }}">
-                        <h1>{{ config('app.name') }}</h1>
-                    </a> --}}
-                    {{-- end::Logo --}}
                 </div>
-                {{-- end::Brand --}}
-                {{-- begin::Aside menu --}}
+                
+                <!-- Aside Menu -->
+                 
                 <div class="aside-menu flex-column-fluid ps-5 pe-3 mb-9" id="kt_aside_menu">
-                    {{-- begin::Aside Menu --}}
                     <div class="w-100 hover-scroll-overlay-y d-flex pe-2" id="kt_aside_menu_wrapper"
                         data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}"
                         data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer"
                         data-kt-scroll-wrappers="#kt_aside, #kt_aside_menu, #kt_aside_menu_wrapper"
                         data-kt-scroll-offset="100">
-                        {{-- begin::Menu --}}
+                        
                         <div class="menu menu-column menu-rounded menu-sub-indention menu-active-bg fw-semibold my-auto"
                             id="#kt_aside_menu" data-kt-menu="true">
-                            {{-- begin:Menu item --}}
+                            
+                            <!-- Dashboard Menu Item -->
                             <div class="menu-item menu-accordion">
-                                {{-- begin:Menu link --}}
                                 <a href="{{ route('admin.dashboard') }}" class="menu-link">
                                     <span class="menu-icon">
-                                        {{-- begin::Svg Icon | path: icons/duotune/arrows/arr001.svg --}}
                                         <span class="svg-icon svg-icon-5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
-                                                viewBox="0 0 24 24" version="1.1">
-                                                <path
-                                                    d="M3,16 L5,16 C5.55228475,16 6,15.5522847 6,15 C6,14.4477153 5.55228475,14 5,14 L3,14 L3,12 L5,12 C5.55228475,12 6,11.5522847 6,11 C6,10.4477153 5.55228475,10 5,10 L3,10 L3,8 L5,8 C5.55228475,8 6,7.55228475 6,7 C6,6.44771525 5.55228475,6 5,6 L3,6 L3,4 C3,3.44771525 3.44771525,3 4,3 L10,3 C10.5522847,3 11,3.44771525 11,4 L11,19 C11,19.5522847 10.5522847,20 10,20 L4,20 C3.44771525,20 3,19.5522847 3,19 L3,16 Z"
-                                                    fill="currentColor" opacity="0.3" />
-                                                <path
-                                                    d="M16,3 L19,3 C20.1045695,3 21,3.8954305 21,5 L21,15.2485298 C21,15.7329761 20.8241635,16.200956 20.5051534,16.565539 L17.8762883,19.5699562 C17.6944473,19.7777745 17.378566,19.7988332 17.1707477,19.6169922 C17.1540423,19.602375 17.1383289,19.5866616 17.1237117,19.5699562 L14.4948466,16.565539 C14.1758365,16.200956 14,15.7329761 14,15.2485298 L14,5 C14,3.8954305 14.8954305,3 16,3 Z"
-                                                    fill="currentColor" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                <path d="M3,16 L5,16 C5.55228475,16 6,15.5522847 6,15 C6,14.4477153 5.55228475,14 5,14 L3,14 L3,12 L5,12 C5.55228475,12 6,11.5522847 6,11 C6,10.4477153 5.55228475,10 5,10 L3,10 L3,8 L5,8 C5.55228475,8 6,7.55228475 6,7 C6,6.44771525 5.55228475,6 5,6 L3,6 L3,4 C3,3.44771525 3.44771525,3 4,3 L10,3 C10.5522847,3 11,3.44771525 11,4 L11,19 C11,19.5522847 10.5522847,20 10,20 L4,20 C3.44771525,20 3,19.5522847 3,19 L3,16 Z" fill="currentColor" opacity="0.3" />
+                                                <path d="M16,3 L19,3 C20.1045695,3 21,3.8954305 21,5 L21,15.2485298 C21,15.7329761 20.8241635,16.200956 20.5051534,16.565539 L17.8762883,19.5699562 C17.6944473,19.7777745 17.378566,19.7988332 17.1707477,19.6169922 C17.1540423,19.602375 17.1383289,19.5866616 17.1237117,19.5699562 L14.4948466,16.565539 C14.1758365,16.200956 14,15.7329761 14,15.2485298 L14,5 C14,3.8954305 14.8954305,3 16,3 Z" fill="currentColor" />
                                             </svg>
                                         </span>
-                                        {{-- end::Svg Icon --}}
                                     </span>
                                     <span class="menu-title">Dashboard</span>
                                 </a>
-                                {{-- end:Menu link --}}
                             </div>
-                            {{-- end:Menu item --}}
-                            {{-- begin:Menu item --}}
-                            {{-- <div class="menu-item menu-accordion">
-                                <div class="menu-content pt-8 pb-0">
-                                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">
-                                        @if (Auth::user()->role == 'superadmin')
-                                            Menu Super Admin
-                                        @elseif (Auth::user()->role == 'admin')
-                                            Menu Admin
-                                        @endif
-                                    </span>
-                                </div>
-                            </div> --}}
-                            {{-- end:Menu item --}}
-                            {{-- begin:Menu item --}}
+                            
+                            <!-- Master Data Menu -->
                             <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                                {{-- begin:Menu link --}}
                                 <span class="menu-link">
                                     <span class="menu-icon">
-                                        {{-- begin::Svg Icon | path: icons/duotune/arrows/arr001.svg --}}
                                         <span class="svg-icon svg-icon-5">
-                                            {{-- begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo8/dist/../src/media/svg/icons/Files/Selected-file.svg --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px"
-                                                viewBox="0 0 24 24" version="1.1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                                     <polygon points="0 0 24 0 24 24 0 24" />
-                                                    <path
-                                                        d="M4.85714286,1 L11.7364114,1 C12.0910962,1 12.4343066,1.12568431 12.7051108,1.35473959 L17.4686994,5.3839416 C17.8056532,5.66894833 18,6.08787823 18,6.52920201 L18,19.0833333 C18,20.8738751 17.9795521,21 16.1428571,21 L4.85714286,21 C3.02044787,21 3,20.8738751 3,19.0833333 L3,2.91666667 C3,1.12612489 3.02044787,1 4.85714286,1 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z"
-                                                        fill="currentColor" fill-rule="nonzero" opacity="0.3" />
-                                                    <path
-                                                        d="M6.85714286,3 L14.7364114,3 C15.0910962,3 15.4343066,3.12568431 15.7051108,3.35473959 L20.4686994,7.3839416 C20.8056532,7.66894833 21,8.08787823 21,8.52920201 L21,21.0833333 C21,22.8738751 20.9795521,23 19.1428571,23 L6.85714286,23 C5.02044787,23 5,22.8738751 5,21.0833333 L5,4.91666667 C5,3.12612489 5.02044787,3 6.85714286,3 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z"
-                                                        fill="currentColor" fill-rule="nonzero" />
+                                                    <path d="M4.85714286,1 L11.7364114,1 C12.0910962,1 12.4343066,1.12568431 12.7051108,1.35473959 L17.4686994,5.3839416 C17.8056532,5.66894833 18,6.08787823 18,6.52920201 L18,19.0833333 C18,20.8738751 17.9795521,21 16.1428571,21 L4.85714286,21 C3.02044787,21 3,20.8738751 3,19.0833333 L3,2.91666667 C3,1.12612489 3.02044787,1 4.85714286,1 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z" fill="currentColor" fill-rule="nonzero" opacity="0.3" />
+                                                    <path d="M6.85714286,3 L14.7364114,3 C15.0910962,3 15.4343066,3.12568431 15.7051108,3.35473959 L20.4686994,7.3839416 C20.8056532,7.66894833 21,8.08787823 21,8.52920201 L21,21.0833333 C21,22.8738751 20.9795521,23 19.1428571,23 L6.85714286,23 C5.02044787,23 5,22.8738751 5,21.0833333 L5,4.91666667 C5,3.12612489 5.02044787,3 6.85714286,3 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z" fill="currentColor" fill-rule="nonzero" />
                                                 </g>
                                             </svg>
-                                            {{-- end::Svg Icon --}}
                                         </span>
-                                        {{-- end::Svg Icon --}}
                                     </span>
-                                    <span class="menu-title">Master Data</span><span class="menu-arrow"></span>
+                                    <span class="menu-title">Master Data</span>
+                                    <span class="menu-arrow"></span>
                                 </span>
-                                {{-- end:Menu link --}}
-                                {{-- begin:Menu sub --}}
+                                
                                 <div class="menu-sub menu-sub-accordion">
                                     <div class="menu-item menu-accordion">
-                                        {{-- begin:Menu link --}}
                                         <a class="menu-link" href="{{ route('admin.transaksis.index') }}">
                                             <span class="menu-bullet">
                                                 <span class="bullet bullet-dot"></span>
                                             </span>
                                             <span class="menu-title">Data Peminjaman Berkas</span>
                                         </a>
-                                        {{-- end:Menu link --}}
                                     </div>
-                                    {{-- end:Menu item --}}
                                 </div>
-                                {{-- end:Menu sub --}}
                             </div>
-                            {{-- end:Menu item --}}
-                            {{-- begin:Menu item --}}
+                            
+                            <!-- Management Arsip Menu -->
                             <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                                 <span class="menu-link">
                                     <span class="menu-icon">
                                         <span class="svg-icon svg-icon-5">
-                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path opacity="0.3"
-                                                    d="M18 21.6C16.3 21.6 15 20.3 15 18.6V2.50001C15 2.20001 14.6 1.99996 14.3 2.19996L13 3.59999L11.7 2.3C11.3 1.9 10.7 1.9 10.3 2.3L9 3.59999L7.70001 2.3C7.30001 1.9 6.69999 1.9 6.29999 2.3L5 3.59999L3.70001 2.3C3.50001 2.1 3 2.20001 3 3.50001V18.6C3 20.3 4.3 21.6 6 21.6H18Z"
-                                                    fill="currentColor" />
-                                                <path
-                                                    d="M12 12.6H11C10.4 12.6 10 12.2 10 11.6C10 11 10.4 10.6 11 10.6H12C12.6 10.6 13 11 13 11.6C13 12.2 12.6 12.6 12 12.6ZM9 11.6C9 11 8.6 10.6 8 10.6H6C5.4 10.6 5 11 5 11.6C5 12.2 5.4 12.6 6 12.6H8C8.6 12.6 9 12.2 9 11.6ZM9 7.59998C9 6.99998 8.6 6.59998 8 6.59998H6C5.4 6.59998 5 6.99998 5 7.59998C5 8.19998 5.4 8.59998 6 8.59998H8C8.6 8.59998 9 8.19998 9 7.59998ZM13 7.59998C13 6.99998 12.6 6.59998 12 6.59998H11C10.4 6.59998 10 6.99998 10 7.59998C10 8.19998 10.4 8.59998 11 8.59998H12C12.6 8.59998 13 8.19998 13 7.59998ZM13 15.6C13 15 12.6 14.6 12 14.6H10C9.4 14.6 9 15 9 15.6C9 16.2 9.4 16.6 10 16.6H12C12.6 16.6 13 16.2 13 15.6Z"
-                                                    fill="currentColor" />
-                                                <path
-                                                    d="M15 18.6C15 20.3 16.3 21.6 18 21.6C19.7 21.6 21 20.3 21 18.6V12.5C21 12.2 20.6 12 20.3 12.2L19 13.6L17.7 12.3C17.3 11.9 16.7 11.9 16.3 12.3L15 13.6V18.6Z"
-                                                    fill="currentColor" />
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <path opacity="0.3" d="M18 21.6C16.3 21.6 15 20.3 15 18.6V2.50001C15 2.20001 14.6 1.99996 14.3 2.19996L13 3.59999L11.7 2.3C11.3 1.9 10.7 1.9 10.3 2.3L9 3.59999L7.70001 2.3C7.30001 1.9 6.69999 1.9 6.29999 2.3L5 3.59999L3.70001 2.3C3.50001 2.1 3 2.20001 3 3.50001V18.6C3 20.3 4.3 21.6 6 21.6H18Z" fill="currentColor" />
+                                                <path d="M12 12.6H11C10.4 12.6 10 12.2 10 11.6C10 11 10.4 10.6 11 10.6H12C12.6 10.6 13 11 13 11.6C13 12.2 12.6 12.6 12 12.6ZM9 11.6C9 11 8.6 10.6 8 10.6H6C5.4 10.6 5 11 5 11.6C5 12.2 5.4 12.6 6 12.6H8C8.6 12.6 9 12.2 9 11.6ZM9 7.59998C9 6.99998 8.6 6.59998 8 6.59998H6C5.4 6.59998 5 6.99998 5 7.59998C5 8.19998 5.4 8.59998 6 8.59998H8C8.6 8.59998 9 8.19998 9 7.59998ZM13 7.59998C13 6.99998 12.6 6.59998 12 6.59998H11C10.4 6.59998 10 6.99998 10 7.59998C10 8.19998 10.4 8.59998 11 8.59998H12C12.6 8.59998 13 8.19998 13 7.59998ZM13 15.6C13 15 12.6 14.6 12 14.6H10C9.4 14.6 9 15 9 15.6C9 16.2 9.4 16.6 10 16.6H12C12.6 16.6 13 16.2 13 15.6Z" fill="currentColor" />
+                                                <path d="M15 18.6C15 20.3 16.3 21.6 18 21.6C19.7 21.6 21 20.3 21 18.6V12.5C21 12.2 20.6 12 20.3 12.2L19 13.6L17.7 12.3C17.3 11.9 16.7 11.9 16.3 12.3L15 13.6V18.6Z" fill="currentColor" />
                                             </svg>
                                         </span>
                                     </span>
-                                    <span class="menu-title">Management Arsip</span><span class="menu-arrow"></span>
+                                    <span class="menu-title">Management Arsip</span>
+                                    <span class="menu-arrow"></span>
                                 </span>
+                                
                                 <div class="menu-sub menu-sub-accordion">
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.ijazahs.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">Ijazah</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.pangkats.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">SK Pangkat</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.cpnss.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">SK CPNS</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.jabatans.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">SK Jabatan</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.mutasis.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">SK Mutasi Unit</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.pemberhentians.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">SK Pemberhentian</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.transaksis.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">Sertifiikasi</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.transaksis.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">Satya Lencana</span>
-                                        </a>
-                                    </div>
-                                    <div class="menu-item menu-accordion">
-                                        <a class="menu-link" href="{{ route('admin.transaksis.index') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title">Penilaian Prestasi Kerja (SKP)</span>
-                                        </a>
+                                    <!-- Arsip management menu -->
+                                     <div class="menu-sub menu-sub-accordion">
+                                        @foreach(['ijazah', 'pangkat', 'cpns', 'jabatan', 'mutasi', 'pemberhentian'] as $type)
+                                        <div class="menu-item">
+                                            <a class="menu-link {{ request()->is('admin/arsip/'.$type.'*') ? 'active' : '' }}" 
+                                                href="{{ route('admin.arsip.index', ['type' => $type]) }}">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot"></span>
+                                                </span>
+                                                <span class="menu-title">{{ ucfirst($type) }}</span>
+                                            </a>
+                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="ms-1">
-                    <div class="btn btn-sm btn-icon btn-active-color-primary position-relative me-n2"
-                        data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-overflow="true"
-                        data-kt-menu-placement="top-end">
-                        {{-- begin::Svg Icon | path: icons/duotune/coding/cod001.svg --}}
-                        <span class="svg-icon svg-icon-1">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.3"
-                                    d="M22.1 11.5V12.6C22.1 13.2 21.7 13.6 21.2 13.7L19.9 13.9C19.7 14.7 19.4 15.5 18.9 16.2L19.7 17.2999C20 17.6999 20 18.3999 19.6 18.7999L18.8 19.6C18.4 20 17.8 20 17.3 19.7L16.2 18.9C15.5 19.3 14.7 19.7 13.9 19.9L13.7 21.2C13.6 21.7 13.1 22.1 12.6 22.1H11.5C10.9 22.1 10.5 21.7 10.4 21.2L10.2 19.9C9.4 19.7 8.6 19.4 7.9 18.9L6.8 19.7C6.4 20 5.7 20 5.3 19.6L4.5 18.7999C4.1 18.3999 4.1 17.7999 4.4 17.2999L5.2 16.2C4.8 15.5 4.4 14.7 4.2 13.9L2.9 13.7C2.4 13.6 2 13.1 2 12.6V11.5C2 10.9 2.4 10.5 2.9 10.4L4.2 10.2C4.4 9.39995 4.7 8.60002 5.2 7.90002L4.4 6.79993C4.1 6.39993 4.1 5.69993 4.5 5.29993L5.3 4.5C5.7 4.1 6.3 4.10002 6.8 4.40002L7.9 5.19995C8.6 4.79995 9.4 4.39995 10.2 4.19995L10.4 2.90002C10.5 2.40002 11 2 11.5 2H12.6C13.2 2 13.6 2.40002 13.7 2.90002L13.9 4.19995C14.7 4.39995 15.5 4.69995 16.2 5.19995L17.3 4.40002C17.7 4.10002 18.4 4.1 18.8 4.5L19.6 5.29993C20 5.69993 20 6.29993 19.7 6.79993L18.9 7.90002C19.3 8.60002 19.7 9.39995 19.9 10.2L21.2 10.4C21.7 10.5 22.1 11 22.1 11.5ZM12.1 8.59998C10.2 8.59998 8.6 10.2 8.6 12.1C8.6 14 10.2 15.6 12.1 15.6C14 15.6 15.6 14 15.6 12.1C15.6 10.2 14 8.59998 12.1 8.59998Z"
-                                    fill="currentColor" />
-                                <path
-                                    d="M17.1 12.1C17.1 14.9 14.9 17.1 12.1 17.1C9.30001 17.1 7.10001 14.9 7.10001 12.1C7.10001 9.29998 9.30001 7.09998 12.1 7.09998C14.9 7.09998 17.1 9.29998 17.1 12.1ZM12.1 10.1C11 10.1 10.1 11 10.1 12.1C10.1 13.2 11 14.1 12.1 14.1C13.2 14.1 14.1 13.2 14.1 12.1C14.1 11 13.2 10.1 12.1 10.1Z"
-                                    fill="currentColor" />
-                            </svg>
-                        </span>
-                        {{-- end::Svg Icon --}}
-                    </div>
-
-                </div>
-                {{-- end::User menu --}}
             </div>
-            {{-- end::User panel --}}
-        </div>
-        {{-- end::Footer --}}
-    </div>
-    {{-- end::Aside --}}
-    {{-- begin::Wrapper --}}
-    <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
-        {{-- begin::Header --}}
-        <div id="kt_header" class="header ">
-            {{-- begin::Container --}}
-            <div class=" container  d-flex flex-stack flex-wrap gap-2" id="kt_header_container">
-                {{-- begin::Page title --}}
-                <div class="page-title d-flex flex-column align-items-start justify-content-center flex-wrap me-lg-2 pb-5 pb-lg-0"
-                    data-kt-swapper="true" data-kt-swapper-mode="prepend"
-                    data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
-                    {{-- begin::Heading --}}
-                    <h1 class="d-flex flex-column center text-dark fw-bold my-0 fs-1">
-                        @if (Route::currentRouteName() == 'admin.dashboard')
-                            Selamat Datang di Aplikasi Arsip Kita
-                        @else
-                            @yield('title')
-                        @endif
-                    </h1>
-                    {{-- end::Heading --}}
-                </div>
-                {{-- end::Page title- --}}
-                {{-- begin::Wrapper --}}
-                <div class="d-flex d-lg-none align-items-center ms-n2 me-2">
-                    {{-- begin::Aside mobile toggle --}}
+            <!-- End Aside -->
+            
+            <!-- Begin Wrapper -->
+            <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
+                
+                <!-- Header -->
+                <div id="kt_header" class="header">
+                    <div class="container d-flex flex-stack flex-wrap gap-2" id="kt_header_container">
+                        <!-- Page Title -->
+                        <div class="page-title d-flex flex-column align-items-start justify-content-center flex-wrap me-lg-2 pb-5 pb-lg-0"
+                            data-kt-swapper="true" data-kt-swapper-mode="prepend"
+                            data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
+                            <h1 class="d-flex flex-column center text-dark fw-bold my-0 fs-1">
+                                @if (Route::currentRouteName() == 'admin.dashboard')
+                                    Selamat Datang di Aplikasi Arsip Kita
+                                @else
+                                    @yield('title')
+                                @endif
+                            </h1>
+                        </div>
+                        {{-- begin::Aside mobile toggle --}}
                     <div class="btn btn-icon btn-active-icon-primary" id="kt_aside_toggle">
                         {{-- begin::Svg Icon | path: icons/duotune/abstract/abs015.svg --}}
                         <span class="svg-icon svg-icon-1 mt-1">
@@ -369,22 +221,11 @@
                         </span>
                         {{-- end::Svg Icon --}}
                     </div>
-                    {{-- end::Aside mobile toggle --}}
-                    {{-- begin::Logo --}}
-                    {{-- <a href="/metronic8/demo3/../demo3/index.html" class="d-flex align-items-center">
-                                <img alt="Logo" src="{{ asset('logos/rji.png') }}"
-                                    class="theme-light-show h-40px" />
-                                <img alt="Logo" src="{{ asset('logos/rji-white.png') }}"
-                                    class="theme-dark-show h-40px" />
-                            </a> --}}
-                    {{-- end::Logo --}}
-                </div>
-                {{-- end::Wrapper --}}
-                {{-- begin::Topbar --}}
-                <div class="d-flex align-items-center flex-shrink-0">
-                    {{-- begin::Theme mode --}}
-                    <div class="d-flex align-items-center ms-3 ms-lg-4">
-                        {{-- begin::Menu toggle --}}
+                        <!-- Topbar -->
+                        <div class="d-flex align-items-center flex-shrink-0">
+                            <!-- Theme Mode Toggle -->
+                            <div class="d-flex align-items-center ms-3 ms-lg-4">
+                        {{-- begin::a --}}
                         <a href="#"
                             class="btn btn-icon btn-color-gray-700 btn-active-color-primary btn-outline w-40px h-40px"
                             data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
@@ -548,18 +389,15 @@
                         </div>
                         {{-- end::Menu --}}
                     </div>
-                    {{-- end::Theme mode --}}
+                        </div>
+                    </div>
                 </div>
-                {{-- end::Topbar --}}
-            </div>
-            {{-- end::Container --}}
-        </div>
-        {{-- end::Header --}}
-        {{-- begin::Content --}}
-        @yield('content')
-        {{-- end::Content --}}
-        {{-- begin::Footer --}}
-        <div class="footer py-4 d-flex flex-lg-column " id="kt_footer">
+                
+                <!-- Main Content -->
+                @yield('content')
+                
+                <!-- Footer -->
+                <div class="footer py-4 d-flex flex-lg-column " id="kt_footer">
             {{-- begin::Container --}}
             <div class=" container  d-flex flex-column flex-md-row flex-stack">
                 {{-- begin::Copyright --}}
@@ -578,39 +416,27 @@
             </div>
             {{-- end::Container --}}
         </div>
-        {{-- end::Footer --}}
+            </div>
+            <!-- End Wrapper -->
+        </div>
+        <!-- End Page -->
     </div>
-    {{-- end::Wrapper --}}
-    </div>
-    {{-- end::Page --}}
-    </div>
-    {{-- end::Root --}}
-    {{-- begin::Scrolltop --}}
+
+    <!-- Scroll to Top -->
     <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
-        {{-- begin::Svg Icon | path: icons/duotune/arrows/arr066.svg --}}
         <span class="svg-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1"
-                    transform="rotate(90 13 6)" fill="currentColor" />
-                <path
-                    d="M12.5657 8.56569L16.75 12.75C17.1642 13.1642 17.8358 13.1642 18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711L5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75C6.16421 13.1642 6.83579 13.1642 7.25 12.75L11.4343 8.56569C11.7467 8.25327 12.2533 8.25327 12.5657 8.56569Z"
-                    fill="currentColor" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1" transform="rotate(90 13 6)" fill="currentColor" />
+                <path d="M12.5657 8.56569L16.75 12.75C17.1642 13.1642 17.8358 13.1642 18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711L5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75C6.16421 13.1642 6.83579 13.1642 7.25 12.75L11.4343 8.56569C11.7467 8.25327 12.2533 8.25327 12.5657 8.56569Z" fill="currentColor" />
             </svg>
         </span>
-        {{-- end::Svg Icon --}}
     </div>
-    {{-- end::Scrolltop --}}
-    {{-- begin::Javascript --}}
-    {{-- begin::Global Javascript Bundle(mandatory for all pages) --}}
+
+    <!-- Global Javascript Bundle -->
     <script src="{{ asset('themes/admin/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('themes/admin/js/scripts.bundle.js') }}"></script>
-    {{-- end::Global Javascript Bundle --}}
-    {{-- begin::Vendors Javascript(used for this page only) --}}
+    
+    <!-- Page Specific Scripts -->
     @yield('page_scripts')
-    {{-- end::Custom Javascript --}}
-    {{-- end::Javascript --}}
 </body>
-{{-- end::Body --}}
-
 </html>

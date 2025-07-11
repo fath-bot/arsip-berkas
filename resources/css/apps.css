@@ -1,0 +1,249 @@
+
+        :root {
+            --navbar-height: 60px;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 80px;
+            --footer-height: 50px;
+            --transition-speed: 0.3s;
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fc;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            height: var(--navbar-height);
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            padding: 0 1rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--navbar-height));
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            transition: all var(--transition-speed) ease;
+            overflow-y: auto;
+            z-index: 1020;
+        }
+
+        .sidebar-collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-collapsed .sidebar-text,
+        .sidebar-collapsed .sidebar-brand-text {
+            display: none;
+        }
+
+        .sidebar-collapsed .nav-link {
+            justify-content: center;
+        }
+
+        .sidebar-collapsed .sidebar-brand-icon {
+            margin-right: 0;
+        }
+
+        .sidebar-nav {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .sidebar-brand {
+            height: 4.375rem;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 800;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            color: var(--primary-color);
+        }
+
+        .sidebar-brand-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: #d1d3e2;
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .nav-link:hover {
+            color: #b7b9cc;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            color: white;
+            background-color: var(--primary-color);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--navbar-height);
+            padding: 1.5rem;
+            min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+            transition: all var(--transition-speed) ease;
+        }
+
+        .main-content-collapsed {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--footer-height);
+            background-color: white;
+            box-shadow: 0 -0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-speed) ease;
+            z-index: 1010;
+        }
+
+        .footer-collapsed {
+            left: var(--sidebar-collapsed-width);
+        }
+
+        /* Toggle Button */
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #d1d3e2;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .sidebar-toggle:hover {
+            color: #b7b9cc;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.35rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-collapsed {
+                transform: translateX(0);
+                width: var(--sidebar-collapsed-width);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .footer {
+                left: 0;
+            }
+        }
+
+        /* Chart Containers */
+        #transaksi_chart {
+            width: 100%;
+            height: 300px;
+            min-height: 300px;
+        }
+
+        .chart-pie {
+            position: relative;
+            height: 250px;
+        }
+
+        .apexcharts-tooltip-custom {
+            padding: 8px 12px;
+            background: #fff;
+            border: 1px solid #e4e6ef;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .tooltip-header {
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: #181C32;
+        }
+        .tooltip-body {
+            font-size: 12px;
+        }
+        .tooltip-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .tooltip-label {
+            color: #7E8299;
+            margin-right: 12px;
+        }
+        .tooltip-value {
+            font-weight: 600;
+            color: #181C32;
+        }
+
+       

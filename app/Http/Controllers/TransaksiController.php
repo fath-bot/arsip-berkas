@@ -12,7 +12,30 @@ class TransaksiController extends Controller
     {
         $transaksis = Transaksi::orderBy('tanggal_masuk', 'DESC')->get();
         $transaksiCount = $transaksis->count();
-        return view('admin.pages.transaksis.index', compact('transaksis', 'transaksiCount'));
+
+        // Count by status
+        $sudahDikembalikan = $transaksis->where('status', 'Sudah Dikembalikan')->count();
+        $belumDikembalikan = $transaksis->where('status', 'Belum Dikembalikan')->count();
+        $belumDiambil = $transaksis->where('status', 'Belum Diambil')->count();
+
+        // For chart data (example - adjust based on your needs)
+        $transaksiChartData = [
+            $sudahDikembalikan,
+            $belumDikembalikan,
+            $belumDiambil
+        ];
+
+        $transaksiChartLabels = ['Sudah Dikembalikan', 'Belum Dikembalikan', 'Belum Diambil'];
+
+        return view('admin.pages.transaksis.index', compact(
+            'transaksis',
+            'transaksiCount',
+            'sudahDikembalikan',
+            'belumDikembalikan',
+            'belumDiambil',
+            'transaksiChartData',
+            'transaksiChartLabels'
+        ));
     }
 
     public function create()
@@ -27,7 +50,7 @@ class TransaksiController extends Controller
             'tanggal_masuk' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_masuk',
             'alasan' => 'required|string|max:500',
-            'status' => 'required|string|in:Sudah Diambil,Belum Diambil,Sudah Dikembalikan,Belum Dikembalikan',
+            'status' => 'required|string|in:Belum Diambil,Sudah Dikembalikan,Belum Dikembalikan',
         ]);
 
         Transaksi::create($validated);
@@ -51,7 +74,7 @@ class TransaksiController extends Controller
             'tanggal_masuk' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_masuk',
             'alasan' => 'required|string|max:500',
-            'status' => 'required|string|in:Sudah Diambil,Belum Diambil,Sudah Dikembalikan,Belum Dikembalikan',
+            'status' => 'required|string|in:Belum Diambil,Sudah Dikembalikan,Belum Dikembalikan',
         ]);
 
         $transaksi->update($validated);
