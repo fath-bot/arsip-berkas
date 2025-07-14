@@ -17,6 +17,8 @@ class TransaksiController extends Controller
         $sudahDikembalikan = $transaksis->where('status', 'Sudah Dikembalikan')->count();
         $belumDikembalikan = $transaksis->where('status', 'Belum Dikembalikan')->count();
         $belumDiambil = $transaksis->where('status', 'Belum Diambil')->count();
+        $jenisList = $transaksis->pluck('jenis_berkas')->unique()->sort()->values();
+ 
 
         // For chart data (example - adjust based on your needs)
         $transaksiChartData = [
@@ -34,7 +36,8 @@ class TransaksiController extends Controller
             'belumDikembalikan',
             'belumDiambil',
             'transaksiChartData',
-            'transaksiChartLabels'
+            'transaksiChartLabels',
+            'jenisList'
         ));
     }
 

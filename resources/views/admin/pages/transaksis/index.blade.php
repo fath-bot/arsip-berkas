@@ -3,22 +3,57 @@
 @section('title', 'Data Peminjaman Berkas')
 
 @section('content')
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-    <div class="container-xxl" id="kt_content_container">
-        <div class="card mb-5 mb-xl-10">
-            <div class="card-header border-0 pt-5">
-                <div class="card-title align-items-start flex-column">
-                    <span class="card-label fw-bold fs-3 mb-1">Data Peminjaman Berkas</span>
-                    <span class="text-muted mt-1 fw-semibold fs-7">{{ $transaksis->count() }} transaksi ditemukan</span>
-                </div>
+<div class="main-content" id="mainContent">
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h2 class="m-0 font-weight-bold text-primary"> Data Peminjaman Berkas</h2>
                 <div class="card-toolbar">
                     <a href="{{ route('admin.transaksis.create') }}" class="btn btn-primary">
-                        <i class="ki-duotone ki-plus fs-2"></i> Tambah Transaksi
+                        <i class="fas fa-plus-circle"></i> Tambah Peminjaman
                     </a>
                 </div>
             </div>
-
-            <div class="card-body py-3">
+            
+            <!-- Card Body -->
+            <div class="card-body">
+                <!-- Chart Section -->
+                <!-- Chart will be placed here -->
+                
+                <!-- Filter Section -->
+                <div class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Jenis Berkas</label>
+                            <select id="filterJenis" class="form-select form-select-sm">
+                                <option value="">Semua Jenis</option>
+                                @foreach ($jenisList as $jenis)
+                                    <option value="{{ $jenis }}">{{ $jenis }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select id="filterStatus" class="form-select form-select-sm">
+                                <option value="">Semua Status</option>
+                                <option value="Belum Diambil">Belum Diambil</option>
+                                <option value="Sudah Dikembalikan">Sudah Dikembalikan</option>
+                                <option value="Belum Dikembalikan">Belum Dikembalikan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Dari Tanggal</label>
+                            <input type="date" id="filterFromDate" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Sampai Tanggal</label>
+                            <input type="date" id="filterToDate" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Table Section -->
                 <div class="table-responsive">
                     <table id="kt_transaksis_table" class="table align-middle table-row-dashed fs-6 gy-5">
                         <thead>
@@ -36,9 +71,7 @@
                             @foreach ($transaksis as $transaksi)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>
-                                    <span class="badge badge-light-primary">{{ $transaksi->jenis_berkas }}</span>
-                                </td>
+                                <td><span class="text-">{{ $transaksi->jenis_berkas }}</span></td>
                                 <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_masuk)->format('d/m/Y') }}</td>
                                 <td>
                                     @if($transaksi->tanggal_kembali)
@@ -49,9 +82,7 @@
                                 </td>
                                 <td title="{{ $transaksi->alasan }}">
                                     {{ Str::limit($transaksi->alasan, 50) }}
-                                    @if(strlen($transaksi->alasan) > 50)
-                                        <span class="text-primary cursor-pointer" data-bs-toggle="tooltip" title="Lihat selengkapnya">...</span>
-                                    @endif
+                                     
                                 </td>
                                 <td>
                                     @php
@@ -62,19 +93,16 @@
                                         ];
                                         $statusClass = $statusClasses[$transaksi->status] ?? 'secondary';
                                     @endphp
-                                    <span class="badge badge-light-{{ $statusClass }}">{{ $transaksi->status }}</span>
+                                    <span class="badge bg-{{ $statusClass }}">{{ $transaksi->status }}</span>
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <!-- Edit Button -->
                                         <a href="{{ route('admin.transaksis.edit', $transaksi->id) }}" 
                                            class="btn btn-icon btn-active-light-primary w-30px h-30px"
                                            data-bs-toggle="tooltip" 
                                            title="Edit">
                                             <i class="fas fa-edit fs-4"></i>
                                         </a>
-                                        
-                                        <!-- Delete Button with Modal Trigger -->
                                         <button class="btn btn-icon btn-active-light-danger w-30px h-30px" 
                                            data-bs-toggle="modal" 
                                            data-bs-target="#deleteModal" 
@@ -92,77 +120,52 @@
             </div>
         </div>
     </div>
-</div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" tabindex="-1" id="deleteModal" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form id="deleteForm" method="POST">
-                @csrf
-                @method('DELETE')
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Yakin ingin menghapus data transaksi peminjaman ini? Tindakan ini tidak dapat dibatalkan.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">
-                        <span class="indicator-label">Hapus</span>
-                        <span class="indicator-progress">Menghapus...
-                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                        </span>
-                    </button>
-                </div>
-            </form>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" tabindex="-1" id="deleteModal" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="deleteForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Yakin ingin menghapus data transaksi peminjaman ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">
+                            <span class="indicator-label">Hapus</span>   
+                        </button>
+                    </div>  
+                </form>
+            </div>
         </div>
     </div>
 </div>
 @endsection
 
-@section('page_styles')
+@push('styles')
 <link href="{{ asset('themes/admin/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet">
-<style>
-    /* Custom table styling */
-    #kt_transaksis_table tbody tr td {
-        vertical-align: middle;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 767px) {
-        .card-header {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .card-toolbar {
-            width: 100%;
-        }
-        .card-toolbar a {
-            width: 100%;
-        }
-    }
-    
-    /* Badge styling */
-    .badge {
-        padding: 0.35em 0.65em;
-        font-size: 0.85em;
-    }
-</style>
-@endsection
+<link href="{{ asset('themes/admin/plugins/custom/apexcharts/apexcharts.bundle.css') }}" rel="stylesheet">
+@endpush
 
-@section('page_scripts')
+@push('scripts')
 <script src="{{ asset('themes/admin/plugins/custom/datatables/datatables.bundle.js') }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Initialize DataTable with responsive settings
+         
         const table = $('#kt_transaksis_table').DataTable({
             responsive: true,
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json"
-            },
+             language: {
+                lengthMenu: "Tampilkan _MENU_ baris",
+                search: "Cari:",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan _START_ hingga _END_ dari _TOTAL_ baris",
+           },
             dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
                  "<'row'<'col-sm-12'tr>>" +
                  "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
@@ -199,63 +202,58 @@
                         columns: ':visible'
                     }
                 }
-            ],
-            initComplete: function() {
-                // Add custom filter for status
-                this.api().columns(5).every(function() {
-                    const column = this;
-                    const select = $('<select class="form-select form-select-sm"><option value="">Semua Status</option></select>')
-                        .appendTo($(column.header()).empty())
-                        .on('change', function() {
-                            const val = $.fn.dataTable.util.escapeRegex($(this).val());
-                            column.search(val ? '^' + val + '$' : '', true, false).draw();
-                        });
-
-                    column.data().unique().sort().each(function(d) {
-                        select.append('<option value="' + d + '">' + d + '</option>');
-                    });
-                });
-            }
+            ]
         });
 
-        // Initialize tooltips
-        $('[data-bs-toggle="tooltip"]').tooltip({
-            trigger: 'hover'
-        });
-
-        // Responsive adjustments
-        function handleResponsive() {
-            if ($(window).width() < 768) {
-                table.buttons().container().addClass('flex-column');
-                $('.dt-buttons .btn').addClass('mb-2').css('width', '100%');
-            } else {
-                table.buttons().container().removeClass('flex-column');
-                $('.dt-buttons .btn').removeClass('mb-2').css('width', 'auto');
-            }
-        }
-
-        // Initial call and window resize event
-        handleResponsive();
-        $(window).resize(handleResponsive);
-    });
-
-    // Set delete action for modal
-    function setDeleteAction(url) {
-        const form = document.getElementById('deleteForm');
-        form.action = url;
-        
-        // Add loading state to delete button
-        const deleteButton = form.querySelector('.btn-danger');
-        deleteButton.addEventListener('click', function(e) {
-            if (!form.action) {
-                e.preventDefault();
-                return;
-            }
+        //   filters
+        $('#filterJenis, #filterStatus').on('change', function() {
+            const jenis = $('#filterJenis').val();
+            const status = $('#filterStatus').val();
             
-            // Show loading indicator
-            deleteButton.setAttribute('data-kt-indicator', 'on');
-            deleteButton.disabled = true;
+            table.column(1).search(jenis).column(5).search(status).draw();
         });
-    }
+        
+        // Date   filter
+        $('#filterFromDate, #filterToDate').on('change', function() {
+            const fromDate = $('#filterFromDate').val();
+            const toDate = $('#filterToDate').val();
+            
+            if (fromDate || toDate) {
+                $.fn.dataTable.ext.search.push(
+                    function(settings, data, dataIndex) {
+                        const dateStr = data[2];  
+                        const [day, month, year] = dateStr.split('/');
+                        const rowDate = new Date(year, month - 1, day);
+                        
+                        const from = fromDate ? new Date(fromDate) : null;
+                        const to = toDate ? new Date(toDate) : null;
+                        
+                        if ((from === null && to === null) ||
+                            (from === null && rowDate <= to) ||
+                            (from <= rowDate && to === null) ||
+                            (from <= rowDate && rowDate <= to)) {
+                            return true;
+                        }
+                        return false;
+                    }
+                );
+                table.draw();
+                $.fn.dataTable.ext.search.pop();
+            } else {
+                table.draw();
+            }
+        });
+
+        // Set delete action for modal
+        window.setDeleteAction = function(url) {
+            const form = document.getElementById('deleteForm');
+            form.action = url;
+            
+           
+        }
+        
+        // Initialize tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
 </script>
-@endsection
+@endpush

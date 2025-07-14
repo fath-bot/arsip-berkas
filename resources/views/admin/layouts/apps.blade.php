@@ -1,17 +1,20 @@
-    <!-- Navbar -->
-    <x-header></x-header>
+<!-- Navbar -->
+<x-header></x-header>
 
-    <!-- Navbar -->
-    <x-navbar></x-navbar>
+<!-- Navbar -->
+<x-navbar></x-navbar>
 
-    <!-- Sidebar -->
-    <x-sidebar></x-sidebar>
+<!-- Sidebar -->
+<x-sidebar></x-sidebar>
 
-    <!-- Main Content -->
-    @yield('content')
+<!-- Main Content -->
+@yield('content')   
+
+<!-- Page Styles Section --> 
+@stack('styles')
     
-    
-    <!-- footer -->
-    <x-footer></x-footer>
+<!-- Page Scripts Section -->
+@stack('scripts')
 
-    
+<!-- footer -->
+<x-footer></x-footer>

@@ -432,9 +432,6 @@
         </span>
     </div>
 
-    <!-- Global Javascript Bundle -->
-    <script src="{{ asset('themes/admin/plugins/global/plugins.bundle.js') }}"></script>
-    <script src="{{ asset('themes/admin/js/scripts.bundle.js') }}"></script>
     
     <!-- Page Specific Scripts -->
     @yield('page_scripts')

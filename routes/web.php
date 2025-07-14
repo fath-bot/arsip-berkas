@@ -4,11 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ArsipController;
+use App\Http\Controllers\AuthController;
 
 // Route publik
 Route::get('/home', function () {
     return view('home');
 })->name('home');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/test-login', function() {
+    return view('api-test');
+});
 
 // Group admin
 Route::prefix('admin')->name('admin.')->group(function () {

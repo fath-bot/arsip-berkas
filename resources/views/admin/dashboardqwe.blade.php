@@ -93,10 +93,10 @@
                         </div>
                         <div class="mt-4 text-center small">
                             <span class="mr-2">
-                                <i class="fas fa-circle text-warning"></i> Belum Dikembalikan 
+                                <i class="fas fa-circle text-warning"></i> Belum Dikembalikan
                             </span>
                             <span class="mr-2">
-                                <i class="fas fa-circle text-success"></i> Sudah Dikembalikan 
+                                <i class="fas fa-circle text-success"></i> Sudah Dikembalikan
                             </span>
                             <span class="mr-2">
                                 <i class="fas fa-circle text-danger"></i> Belum Diambil
@@ -111,7 +111,8 @@
 @endsection
 
 <!-- Scripts -->
-   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>

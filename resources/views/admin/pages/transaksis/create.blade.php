@@ -1,8 +1,10 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.apps')
 
 @section('title', 'Tambah Transaksi Peminjaman')
 
 @section('content')
+
+<div class="main-content" id="mainContent">
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <div class="container-xxl" id="kt_content_container">
         <div class="card mb-5 mb-xl-10">
@@ -17,25 +19,25 @@
                 <div class="card-body border-top p-9">
                     <!-- Jenis Berkas -->
                     <div class="row mb-6">
-    <label class="col-lg-4 col-form-label required fw-bold fs-6">Jenis Berkas</label>
-    <div class="col-lg-8 fv-row">
-        <select name="jenis_berkas" class="form-select form-select-lg form-select-solid @error('jenis_berkas') is-invalid @enderror" required>
-            <option value="" disabled selected>Pilih Jenis Berkas</option>
-            <option value="Ijazah" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Ijazah' ? 'selected' : '' }}>Ijazah</option>
-            <option value="SK Pangkat" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Pangkat' ? 'selected' : '' }}>SK Pangkat</option>
-            <option value="SK CPNS" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK CPNS' ? 'selected' : '' }}>SK CPNS</option>
-            <option value="SK Jabatan" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Jabatan' ? 'selected' : '' }}>SK Jabatan</option>
-            <option value="SK Mutasi Unit" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Mutasi Unit' ? 'selected' : '' }}>SK Mutasi Unit</option>
-            <option value="SK Pemberhentian" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Pemberhentian' ? 'selected' : '' }}>SK Pemberhentian</option>
-            <option value="Sertifikasi" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Sertifikasi' ? 'selected' : '' }}>Sertifikasi</option>
-            <option value="Satya Lencana" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Satya Lencana' ? 'selected' : '' }}>Satya Lencana</option>
-            <option value="Penilaian Prestasi Kerja (SKP)" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Penilaian Prestasi Kerja (SKP)' ? 'selected' : '' }}>Penilaian Prestasi Kerja (SKP)</option>
-        </select>
-        @error('jenis_berkas')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-</div>
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">Jenis Berkas</label>
+                        <div class="col-lg-8 fv-row">
+                            <select name="jenis_berkas" class="form-select form-select-lg form-select-solid @error('jenis_berkas') is-invalid @enderror" required>
+                                <option value="" disabled selected>Pilih Jenis Berkas</option>
+                                <option value="Ijazah" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Ijazah' ? 'selected' : '' }}>Ijazah</option>
+                                <option value="SK Pangkat" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Pangkat' ? 'selected' : '' }}>SK Pangkat</option>
+                                <option value="SK CPNS" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK CPNS' ? 'selected' : '' }}>SK CPNS</option>
+                                <option value="SK Jabatan" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Jabatan' ? 'selected' : '' }}>SK Jabatan</option>
+                                <option value="SK Mutasi Unit" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Mutasi Unit' ? 'selected' : '' }}>SK Mutasi Unit</option>
+                                <option value="SK Pemberhentian" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'SK Pemberhentian' ? 'selected' : '' }}>SK Pemberhentian</option>
+                                <option value="Sertifikasi" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Sertifikasi' ? 'selected' : '' }}>Sertifikasi</option>
+                                <option value="Satya Lencana" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Satya Lencana' ? 'selected' : '' }}>Satya Lencana</option>
+                                <option value="Penilaian Prestasi Kerja (SKP)" {{ old('jenis_berkas', $transaksi->jenis_berkas ?? '') == 'Penilaian Prestasi Kerja (SKP)' ? 'selected' : '' }}>Penilaian Prestasi Kerja (SKP)</option>
+                            </select>
+                            @error('jenis_berkas')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     <!-- Tanggal Pinjam -->
                     <div class="row mb-6">
@@ -101,7 +103,7 @@
         </div>
     </div>
 </div>
-
+</div>
 <script>
     function setTanggalKembali(tanggalPinjam) {
         if (tanggalPinjam) {
