@@ -6,7 +6,7 @@
 <div class="main-content" id="mainContent">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <h1 class="h3 mb-0 text-gray-800">Selamat Datang {{ session('user_name', 'Admin') }} </h1>
             <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
             </a>
@@ -93,10 +93,10 @@
                         </div>
                         <div class="mt-4 text-center small">
                             <span class="mr-2">
-                                <i class="fas fa-circle text-warning"></i> Belum Dikembalikan 
+                                <i class="fas fa-circle text-warning"></i> Belum Dikembalikan
                             </span>
                             <span class="mr-2">
-                                <i class="fas fa-circle text-success"></i> Sudah Dikembalikan 
+                                <i class="fas fa-circle text-success"></i> Sudah Dikembalikan
                             </span>
                             <span class="mr-2">
                                 <i class="fas fa-circle text-danger"></i> Belum Diambil
@@ -111,7 +111,8 @@
 @endsection
 
 <!-- Scripts -->
-   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>

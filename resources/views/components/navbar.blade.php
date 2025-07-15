@@ -25,7 +25,7 @@
                         <a class="dropdown-item" href="#"><i class="fas fa-file me-2"></i> (NIPxxxxxx) ingin mengambil arsip xxx</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#"><i class="fas fa-file me-2"></i> Notifikasi</a>
-                        <div class="dropdown-divider"></div>
+                         
                     </div>  
                     
                 </li>
@@ -42,7 +42,7 @@
                         <a class="dropdown-item" href="#"><i class="fas fa-file me-2"></i> Arsip kamu siap diambil diruangan </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#"><i class="fas fa-file me-2"></i> Notifikasi</a>
-                        <div class="dropdown-divider"></div>
+                         
                     </div>
                 </li>
                 
@@ -50,13 +50,13 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user"></i>
-                        <span class="d-none d-lg-inline">Admin</span>
+                        <span class="d-none d-lg-inline">
+                            {{ session('user_name', 'Admin') }}
+                        </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#"><i class="fas fa-user fa-sm me-2"></i> Profile</a>
-                        <a class="dropdown-item" href="#"><i class="fas fa-cog fa-sm me-2"></i> Settings</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt fa-sm me-2"></i> Logout</a>
+                         
+                        <a class="dropdown-item" href="{{ route('logout') }}"><i class="fas fa-sign-out-alt fa-sm me-2"></i> Logout</a>
                     </div>
                 </li>
             </ul>

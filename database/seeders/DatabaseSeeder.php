@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Str;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -17,24 +17,30 @@ class DatabaseSeeder extends Seeder
         $this->truncateTables();
 
         // Seed users table
-        DB::table('users')->insert([
-            [
-                'name' => 'Admin User',
-                'email' => 'admin@example.com',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Regular User',
-                'email' => 'user@example.com',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
+       DB::table('users')->insert([
+    [
+        'name' => 'decul',
+        'email' => 'admin@example.com',
+        'nip' => '111111',
+        'role' => 'admin',
+        'email_verified_at' => now(),
+        'password' => Hash::make('admin'),  
+        'remember_token' => Str::random(10),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ],
+    [
+        'name' => 'yayan sawit',
+        'email' => 'superadmin@example.com',
+        'nip' => '222222',
+        'role' => 'superadmin',
+        'email_verified_at' => now(),
+        'password' => Hash::make('super'),  
+        'remember_token' => Str::random(10),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]
+]);
 
         // Seed cache tables
         DB::table('cache')->insert([

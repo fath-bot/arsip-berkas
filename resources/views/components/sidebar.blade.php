@@ -12,14 +12,18 @@
 
     <!-- Nav Items -->
     <ul class="sidebar-nav">
-        <!-- Dashboard -->
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span class="sidebar-text">Dashboard</span>
-            </a>
-        </li>
+    <!-- Dashboard -->
+    <li class="nav-item">
+        @php
+            $dashboardRoute = session('role') === 'user' ? 'user.dashboard' : 'admin.dashboard';
+        @endphp
+        <a class="nav-link {{ request()->routeIs($dashboardRoute) ? 'active' : '' }}" href="{{ route($dashboardRoute) }}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span class="sidebar-text">Dashboard</span>
+        </a>
+    </li>
 
+    @if(in_array(session('role'), ['admin', 'superadmin']))
         <!-- Master Data -->
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.transaksis.index') ? 'active' : '' }}" href="{{ route('admin.transaksis.index') }}">
@@ -67,7 +71,9 @@
                 </ul>
             </div>
         </li>
-    </ul>
+    @endif
+</ul>
+
 </div>
 
 <!-- Sidebar Toggle Script -->
