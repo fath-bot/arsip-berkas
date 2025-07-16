@@ -8,14 +8,13 @@
         <div class="card shadow mb-4">
             <!-- Card Header -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h2 class="m-0 font-weight-bold text-primary"> Data Peminjaman Berkas</h2>
+                <h2 class="m-0 font-weight-bold text-primary"> Data Peminjaman Berkas user</h2>
                 <div class="card-toolbar">
-                    <a href="{{ route('admin.transaksis.create') }}" class="btn btn-primary">
+                    <a href="{{ route('user.transaksis.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus-circle"></i> Tambah Peminjaman
                     </a>
                 </div>
             </div>
-            
             <!-- Card Body -->
             <div class="card-body">
                 <!-- Chart Section -->
@@ -65,8 +64,7 @@
                                 <th class="min-w-120px">Tanggal Pinjam</th>
                                 <th class="min-w-120px">Tanggal Kembali</th>
                                 <th class="min-w-200px">Alasan</th>
-                                <th class="min-w-120px">Status</th>
-                                <th class="min-w-100px text-end">Aksi</th>
+                                <th class="min-w-120px">Status</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -99,23 +97,7 @@
                                     @endphp
                                     <span class="badge bg-{{ $statusClass }}">{{ $transaksi->status }}</span>
                                 </td>
-                                <td class="text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <a href="{{ route('admin.transaksis.edit', $transaksi->id) }}" 
-                                           class="btn btn-icon btn-active-light-primary w-30px h-30px"
-                                           data-bs-toggle="tooltip" 
-                                           title="Edit">
-                                            <i class="fas fa-edit fs-4"></i>
-                                        </a>
-                                        <button class="btn btn-icon btn-active-light-danger w-30px h-30px" 
-                                           data-bs-toggle="modal" 
-                                           data-bs-target="#deleteModal" 
-                                           onclick="setDeleteAction('{{ route('admin.transaksis.destroy', $transaksi->id) }}')"
-                                           title="Hapus">
-                                            <i class="fas fa-trash fs-4"></i>
-                                        </button>
-                                    </div>
-                                </td>
+                                
                             </tr>
                             @endforeach
                         </tbody>
@@ -125,30 +107,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" tabindex="-1" id="deleteModal" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="deleteForm" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Yakin ingin menghapus data transaksi peminjaman ini? Tindakan ini tidak dapat dibatalkan.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger">
-                            <span class="indicator-label">Hapus</span>   
-                        </button>
-                    </div>  
-                </form>
-            </div>
-        </div>
-    </div>
+     
 </div>
 @endsection
 
@@ -173,40 +132,7 @@
             dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
                  "<'row'<'col-sm-12'tr>>" +
                  "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            buttons: [
-                {
-                    extend: 'copy',
-                    className: 'btn btn-light-primary',
-                    text: '<i class="fas fa-copy"></i> Copy',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'excel',
-                    className: 'btn btn-light-success',
-                    text: '<i class="fas fa-file-excel"></i> Excel',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'pdf',
-                    className: 'btn btn-light-danger',
-                    text: '<i class="fas fa-file-pdf"></i> PDF',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'print',
-                    className: 'btn btn-light-info',
-                    text: '<i class="fas fa-print"></i> Print',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }
-            ]
+            
         });
 
         //   filters
