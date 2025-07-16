@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
 
 class TransaksiController extends Controller
 {
@@ -26,29 +27,49 @@ class TransaksiController extends Controller
             $belumDikembalikan,
             $belumDiambil
         ];
+        $name = session('name');
+        $nip = session('nip');
+        $email = session('email');
+        $role = session('role');
 
+
+        $user = \App\Models\User::where('nip', $nip)->first();
         $transaksiChartLabels = ['Sudah Dikembalikan', 'Belum Dikembalikan', 'Belum Diambil'];
+        $view = match ($role) {
+            'admin', 'superadmin' => 'admin.pages.transaksis.index',
+            'user' => 'user.transaksis.index',
+            default => 'login',
+        };
 
-        return view('admin.pages.transaksis.index', compact(
+        return view($view, compact(
             'transaksis',
             'transaksiCount',
             'sudahDikembalikan',
             'belumDikembalikan',
-            'belumDiambil',
             'transaksiChartData',
             'transaksiChartLabels',
             'jenisList'
         ));
+
     }
 
-    public function create()
-    {
-        return view('admin.pages.transaksis.create');
-    }
+   public function create()
+{
+    $role = session('role');
+
+    // Cek role dan arahkan ke view yang sesuai
+    return match ($role) {
+        'admin', 'superadmin' => view('admin.pages.transaksis.create'),
+        'user' => view('user.transaksis.create'),
+        default => abort(403, 'Unauthorized'),
+    };
+}
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nip' => 'required|string|max:255',
             'jenis_berkas' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_masuk',
@@ -58,9 +79,16 @@ class TransaksiController extends Controller
 
         Transaksi::create($validated);
 
-        return redirect()->route('admin.transaksis.index')
+        $redirectRoute = match (session('role')) {
+            'admin', 'superadmin' => 'admin.transaksis.index',
+            'user' => 'user.transaksis.index',
+            default => 'login'
+        };
+
+        return redirect()->route($redirectRoute)
             ->with('toast_success', 'Data peminjaman berhasil ditambahkan');
     }
+
 
     public function edit($id)
     {

@@ -10,8 +10,9 @@ class AdminDashboardController extends Controller
     public function index()
     {
         $transaksis = Transaksi::orderBy('tanggal_masuk', 'DESC')->get();
-        $transaksiCount = $transaksis->count();
-
+        $transaksiCount = $transaksis->count(); 
+        $jenisList = $transaksis->pluck('jenis_berkas')->unique()->sort()->values();
+        
         // Count by status
         $sudahDikembalikan = $transaksis->where('status', 'Sudah Dikembalikan')->count();
         $belumDikembalikan = $transaksis->where('status', 'Belum Dikembalikan')->count();
@@ -59,7 +60,9 @@ class AdminDashboardController extends Controller
             'transaksiChartData',
             'transaksiChartLabels',
             'transaksiChartItems',
-            'monthlyStatusData' // Tambahkan ini jika ingin menggunakan data per status di view
+            'monthlyStatusData',
+            'jenisList' // <-- tambahkan ini
         ));
+
     }
 }

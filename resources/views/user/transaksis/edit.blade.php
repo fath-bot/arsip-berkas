@@ -17,8 +17,8 @@
                 <div class="row mb-3">
                     <label class="col-lg-4 col-form-label required">Nama Peminjam</label>
                     <div class="col-lg-8">
-                        <input type="text" name="name" class="form-control" 
-                               value="{{ $transaksi->name }}" required>
+                        <input type="text" name="nama_peminjam" class="form-control" 
+                               value="{{ $transaksi->nama_peminjam }}" required>
                     </div>
                 </div>
                 
@@ -49,22 +49,13 @@
                             <option value="SK Mutasi Unit" {{ $transaksi->jenis_berkas == 'SK Mutasi Unit' ? 'selected' : '' }}>SK Mutasi Unit</option>
                         </select>
                     </div>
-                </div>@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
+                </div>
                 
                 <div class="row mb-3">
                     <label class="col-lg-4 col-form-label required">Tanggal Pinjam</label>
                     <div class="col-lg-8">
-                        <input type="date" name="tanggal_masuk" class="form-control" 
-                               value="{{ $transaksi->tanggal_masuk }}" required>
+                        <input type="date" name="tanggal_pinjam" class="form-control" 
+                               value="{{ $transaksi->tanggal_pinjam }}" required>
                     </div>
                 </div>
                 
@@ -87,11 +78,10 @@
                     <label class="col-lg-4 col-form-label required">Status</label>
                     <div class="col-lg-8">
                         <select name="status" class="form-select" required>
-                            <option value="" disabled selected>Pilih Status</option>
-                                <option value="Belum Diambil" {{ old('status') == 'Belum Diambil' ? 'selected' : '' }}>Belum Diambil</option>
-                                <option value="Sudah Dikembalikan" {{ old('status') == 'Sudah Dikembalikan' ? 'selected' : '' }}>Sudah Dikembalikan</option>
-                                <option value="Belum Dikembalikan" {{ old('status') == 'Belum Dikembalikan' ? 'selected' : '' }}>Belum Dikembalikan</option>
-                             </select>
+                            <option value="Dipinjam" {{ $transaksi->status == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
+                            <option value="Dikembalikan" {{ $transaksi->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
+                            <option value="Terlambat" {{ $transaksi->status == 'Terlambat' ? 'selected' : '' }}>Terlambat</option>
+                        </select>
                     </div>
                 </div>
                 

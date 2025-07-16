@@ -10,16 +10,15 @@
         <div class="card mb-5 mb-xl-10">
             <div class="card-header border-0 pt-5">
                 <h3 class="card-title align-items-start flex-column">
-                    <span class="card-label fw-bold fs-3 mb-1">Tambah Transaksi Peminjaman</span>
+                    <span class="card-label fw-bold fs-3 mb-1">Tambah Transaksi Peminjaman (user)</span>
                 </h3>
             </div>
 
             <form action="{{ route('admin.transaksis.store') }}" method="POST">
                 @csrf
                 <div class="card-body border-top p-9">
-
                     <!-- Nama Peminjam -->
-                    <div class="row mb-6">
+                    <div class="row mb-2">
                         <label class="col-lg-4 col-form-label required fw-bold fs-6">Nama Peminjam</label>
                         <div class="col-lg-8 fv-row"> 
                             <input type="text" 
@@ -31,7 +30,7 @@
                     </div>
 
                     <!-- NIP Peminjam -->
-                    <div class="row mb-6">
+                    <div class="row mb-2">
                         <label class="col-lg-4 col-form-label required fw-bold fs-6">NIP Peminjam</label>
                         <div class="col-lg-8 fv-row">
                             <input type="text" 
@@ -43,9 +42,8 @@
                         </div>
                     </div>
 
-
                     <!-- Jenis Berkas -->
-                    <div class="row mb-6">
+                    <div class="row mb-2">
                         <label class="col-lg-4 col-form-label required fw-bold fs-6">Jenis Berkas</label>
                         <div class="col-lg-8 fv-row">
                             <select name="jenis_berkas" class="form-select form-select-lg form-select-solid @error('jenis_berkas') is-invalid @enderror" required>
@@ -65,9 +63,9 @@
                             @enderror
                         </div>
                     </div>
-                     
+
                     <!-- Tanggal Pinjam -->
-                    <div class="row mb-6">
+                    <div class="row mb-2">
                         <label class="col-lg-4 col-form-label required fw-bold fs-6">Tanggal Pinjam</label>
                         <div class="col-lg-8 fv-row">
                             <input type="date" name="tanggal_masuk" id="tanggal_masuk"
@@ -81,7 +79,7 @@
                     </div>
 
                     <!-- Tanggal Kembali -->
-                    <div class="row mb-6">
+                    <div class="row mb-2">
                         <label class="col-lg-4 col-form-label required fw-bold fs-6">Tanggal Kembali</label>
                         <div class="col-lg-8 fv-row">
                             <input type="date" name="tanggal_kembali" id="tanggal_kembali"
@@ -94,7 +92,7 @@
                     </div>
 
                     <!-- Alasan -->
-                    <div class="row mb-6">
+                    <div class="row mb-2">
                         <label class="col-lg-4 col-form-label required fw-bold fs-6">Alasan</label>
                         <div class="col-lg-8 fv-row">
                             <textarea name="alasan" class="form-control form-control-lg form-control-solid @error('alasan') is-invalid @enderror"
@@ -106,20 +104,9 @@
                     </div>
 
                     <!-- Status -->
-                    <div class="row mb-6">
-                        <label class="col-lg-4 col-form-label required fw-bold fs-6">Status</label>
-                        <div class="col-lg-8 fv-row">
-                            <select name="status" class="form-select form-select-lg form-select-solid @error('status') is-invalid @enderror" required>
-                                <option value="" disabled selected>Pilih Status</option>
-                                <option value="Belum Diambil" {{ old('status') == 'Belum Diambil' ? 'selected' : '' }}>Belum Diambil</option>
-                                <option value="Sudah Dikembalikan" {{ old('status') == 'Sudah Dikembalikan' ? 'selected' : '' }}>Sudah Dikembalikan</option>
-                                <option value="Belum Dikembalikan" {{ old('status') == 'Belum Dikembalikan' ? 'selected' : '' }}>Belum Dikembalikan</option>
-                            </select>
-                            @error('status')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
+                    <!-- status yang dikirim dari user default Belum Diambil dan akan di kirim ke admin untuk disetujui -->
+                    <input type="hidden" name="status" value="Belum Diambil">
+
                 </div>
 
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
@@ -129,7 +116,7 @@
             </form>
         </div>
     </div>
-</div> 
+</div>
 </div>
 <script>
     function setTanggalKembali(tanggalPinjam) {

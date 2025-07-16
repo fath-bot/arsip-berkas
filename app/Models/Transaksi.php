@@ -34,12 +34,15 @@ class Transaksi extends Model
 	protected $table = 'transaksis';
 
 	protected $fillable = [
+		'name',
+		'nip',
 		'jenis_berkas',
-        'tanggal_masuk',
+		'tanggal_masuk',
 		'tanggal_kembali',
-        'alasan',
+		'alasan',
 		'status'
 	];
+
 
 	public function transaksi()
 	{

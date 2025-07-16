@@ -24,12 +24,12 @@ return new class extends Migration
             'Satya Lencana',
             'Penilaian Prestasi Kerja (SKP)'
         ]);
-
+            $table->string('nip')->nullable();
+            $table->string('name')->nullable();
             $table->text('alasan');
             $table->date('tanggal_masuk');
             $table->date('tanggal_kembali');
             $table->enum('status', [
-            'Sudah Diambil',
             'Belum Diambil',
             'Sudah Dikembalikan',
             'Belum Dikembalikan'

@@ -6,7 +6,14 @@
             </button>
             
             <!-- Brand -->
-            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+            <!-- <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+                <img src="{{ asset('images/logos/ARSIP KITA.png') }}" alt="Arsip Kita Logo" class="logo">
+                <span>Arsip Kita</span>
+            </a> -->
+             @php
+                $dashboardRoute = session('role') === 'user' ? 'user.dashboard' : 'admin.dashboard';
+            @endphp
+            <a class="navbar-brand {{ request()->routeIs($dashboardRoute) ? 'active' : '' }}" href="{{ route($dashboardRoute) }}">
                 <img src="{{ asset('images/logos/ARSIP KITA.png') }}" alt="Arsip Kita Logo" class="logo">
                 <span>Arsip Kita</span>
             </a>
