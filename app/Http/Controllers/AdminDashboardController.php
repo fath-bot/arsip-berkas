@@ -3,20 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaksi;
+use App\Models\Arsip;
 use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $transaksis = Transaksi::orderBy('tanggal_masuk', 'DESC')->get();
-        $transaksiCount = $transaksis->count(); 
-        $jenisList = $transaksis->pluck('jenis_berkas')->unique()->sort()->values();
+        $transaksis = Transaksi::with(['user', 'arsip'])
+                        ->orderBy('tanggal_pinjam', 'DESC')
+                        ->get();
+                        
+        $transaksiCount = $transaksis->count();
         
-        // Count by status
-        $sudahDikembalikan = $transaksis->where('status', 'Sudah Dikembalikan')->count();
-        $belumDikembalikan = $transaksis->where('status', 'Belum Dikembalikan')->count();
-        $belumDiambil = $transaksis->where('status', 'Belum Diambil')->count();
+        // Jenis arsip dari tabel arsip_jenis
+        $jenisList = \App\Models\ArsipJenis::pluck('nama_jenis')->toArray();
+        
+        // Count by status baru
+        $sudahDikembalikan = $transaksis->where('status', 'dikembalikan')->count();
+        $belumDikembalikan = $transaksis->where('status', 'dipinjam')->count();
+        $belumDiambil = $transaksis->where('status', 'belum_diambil')->count();
 
         // Status chart data
         $transaksiChartData = [
@@ -28,7 +34,7 @@ class AdminDashboardController extends Controller
         $transaksiChartLabels = ['Sudah Dikembalikan', 'Belum Dikembalikan', 'Belum Diambil'];
 
         // Monthly transaction count (total)
-        $transaksiChartItems = Transaksi::select(DB::raw("MONTH(tanggal_masuk) as month"), DB::raw("COUNT(*) as count"))
+        $transaksiChartItems = Transaksi::select(DB::raw("MONTH(tanggal_pinjam) as month"), DB::raw("COUNT(*) as count"))
             ->groupBy('month')
             ->orderBy('month')
             ->get()
@@ -39,13 +45,13 @@ class AdminDashboardController extends Controller
                 ];
             });
 
-        // Additional: Monthly data by status (untuk chart lebih detail jika diperlukan)
+        // Additional: Monthly data by status
         $monthlyStatusData = Transaksi::select(
-                DB::raw("MONTH(tanggal_masuk) as month"),
+                DB::raw("MONTH(tanggal_pinjam) as month"),
                 DB::raw("COUNT(*) as total"),
-                DB::raw("SUM(CASE WHEN status = 'Sudah Dikembalikan' THEN 1 ELSE 0 END) as sudah_dikembalikan"),
-                DB::raw("SUM(CASE WHEN status = 'Belum Dikembalikan' THEN 1 ELSE 0 END) as belum_dikembalikan"),
-                DB::raw("SUM(CASE WHEN status = 'Belum Diambil' THEN 1 ELSE 0 END) as belum_diambil")
+                DB::raw("SUM(CASE WHEN status = 'dikembalikan' THEN 1 ELSE 0 END) as sudah_dikembalikan"),
+                DB::raw("SUM(CASE WHEN status = 'dipinjam' THEN 1 ELSE 0 END) as belum_dikembalikan"),
+                DB::raw("SUM(CASE WHEN status = 'belum_diambil' THEN 1 ELSE 0 END) as belum_diambil")
             )
             ->groupBy('month')
             ->orderBy('month')
@@ -61,8 +67,7 @@ class AdminDashboardController extends Controller
             'transaksiChartLabels',
             'transaksiChartItems',
             'monthlyStatusData',
-            'jenisList' // <-- tambahkan ini
+            'jenisList'
         ));
-
     }
 }

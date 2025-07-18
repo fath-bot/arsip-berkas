@@ -69,13 +69,17 @@ class AuthController extends Controller
 
 
         // Simpan ke session
+        // Di dalam method login(), setelah membuat/update user:
         session([
             'user_id' => $user->id,
             'user_name' => $user->name,
             'user_nip' => $user->nip,
             'user_token' => $data['access_token'] ?? null,
             'logged_in' => true,
-            'role' => $user->role
+            'role' => $user->role,
+            // Tambahkan ini untuk akses cepat:
+            'arsip_count' => $user->arsips->count(),
+            'transaksi_count' => $user->transaksis->count()
         ]);
 
         // Redirect berdasarkan role
