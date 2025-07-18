@@ -63,8 +63,8 @@
                 <div class="row mb-3">
                     <label class="col-lg-4 col-form-label required">Tanggal Pinjam</label>
                     <div class="col-lg-8">
-                        <input type="date" name="tanggal_masuk" class="form-control" 
-                               value="{{ $transaksi->tanggal_masuk }}" required>
+                        <input type="date" name="tanggal_pinjam" class="form-control" 
+                               value="{{ $transaksi->tanggal_pinjam }}" required>
                     </div>
                 </div>
                 

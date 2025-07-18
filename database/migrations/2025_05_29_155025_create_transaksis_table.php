@@ -6,41 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            $table->enum('jenis_berkas', [
-            'Ijazah',
-            'SK Pangkat',
-            'SK CPNS',
-            'SK Jabatan',
-            'SK Mutasi Unit',
-            'SK Pemberhentian',
-            'Sertifikasi',
-            'Satya Lencana',
-            'Penilaian Prestasi Kerja (SKP)'
-        ]);
-            $table->string('nip')->nullable();
-            $table->string('name')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('arsip_id')->constrained('arsip')->onDelete('cascade');
+            $table->date('tanggal_pinjam');
+            $table->date('tanggal_kembali')->nullable();
+            $table->enum('status', ['belum_diambil', 'dipinjam', 'dikembalikan']);
+            $table->text('keterangan')->nullable();
             $table->text('alasan');
-            $table->date('tanggal_masuk');
-            $table->date('tanggal_kembali');
-            $table->enum('status', [
-            'Belum Diambil',
-            'Sudah Dikembalikan',
-            'Belum Dikembalikan'
-        ]);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('transaksis');
