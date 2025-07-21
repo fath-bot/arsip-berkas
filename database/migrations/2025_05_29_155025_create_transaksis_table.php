@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('arsip_id')->constrained('arsip')->onDelete('cascade');
+            $table->foreignId('arsip_id')->nullable()->constrained('arsip')->onDelete('cascade');
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali')->nullable();
             $table->enum('status', ['belum_diambil', 'dipinjam', 'dikembalikan']);

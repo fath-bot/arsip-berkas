@@ -1,70 +1,73 @@
+@php
+    use Illuminate\Support\Str;
+    use App\Models\ArsipJenis;
+
+    // Pastikan $arsipJenisList tersedia (bisa di-share lewat AppServiceProvider)
+    $arsipJenisList = $arsipJenisList ?? ArsipJenis::all();
+@endphp
+
 <div class="sidebar" id="sidebar">
     <!-- Sidebar Brand -->
     <a class="sidebar-brand" href="#">
-        <div class="sidebar-brand-icon">
-            <i class="fas fa-archive"></i>
-        </div>
+        <div class="sidebar-brand-icon"><i class="fas fa-archive"></i></div>
         <div class="sidebar-brand-text">Arsip Kita</div>
     </a>
-
-    <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
-    <!-- Nav Items -->
     <ul class="sidebar-nav">
-        <!-- Dashboard -->
+        <!-- dashboard -->
         <li class="nav-item">
             @php
-                $dashboardRoute = session('role') === 'user' ? 'user.dashboard' : 'admin.dashboard';
+                $dashboardRoute = session('role') === 'user'
+                    ? 'user.dashboard'
+                    : (session('role') === 'superadmin'
+                        ? 'superadmin.dashboard'
+                        : 'admin.dashboard');
             @endphp
-            <a class="nav-link {{ request()->routeIs($dashboardRoute) ? 'active' : '' }}" href="{{ route($dashboardRoute) }}">
+            <a class="nav-link {{ request()->routeIs($dashboardRoute) ? 'active' : '' }}"
+               href="{{ route($dashboardRoute) }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span class="sidebar-text">Dashboard</span>
             </a>
         </li>
 
+        <!-- admin -->
         @if(in_array(session('role'), ['admin', 'superadmin']))
-            <!-- Master Data -->
+            <!-- Admin: Data Peminjaman -->
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.transaksis.index') ? 'active' : '' }}" href="{{ route('admin.transaksis.index') }}">
+                <a class="nav-link {{ request()->routeIs('admin.transaksis.*') ? 'active' : '' }}"
+                   href="{{ route('admin.transaksis.index') }}">
                     <i class="fas fa-fw fa-file-alt"></i>
                     <span class="sidebar-text">Data Peminjaman</span>
                 </a>
             </li>
 
-            <!-- Management Arsip -->
+            <!-- Admin: Arsip -->
+            @php $arsipOpen = request()->is('admin/arsip/*'); @endphp
             <li class="nav-item">
-                @php
-                    $arsipActive = request()->is('admin/arsip/*');
-                @endphp
-
-                <a class="nav-link d-flex justify-content-between align-items-center {{ $arsipActive ? '' : 'collapsed' }}"
-                data-bs-toggle="collapse"
-                href="#arsipSubmenu"
-                role="button"
-                aria-expanded="{{ $arsipActive ? 'true' : 'false' }}"
-                aria-controls="arsipSubmenu"
-                id="arsipMenuLink"  
-                style="{{ $arsipActive ? 'background-color: #0d6efd; color: white;' : '' }}">
+                <a class="nav-link d-flex justify-content-between align-items-center {{ $arsipOpen ? '' : 'collapsed' }}"
+                   data-bs-toggle="collapse"
+                   href="#adminArsipMenu"
+                   aria-expanded="{{ $arsipOpen ? 'true' : 'false' }}"
+                   aria-controls="adminArsipMenu">
                     <div>
                         <i class="fas fa-fw fa-folder"></i>
                         <span class="sidebar-text">Management Arsip</span>
                     </div>
                     <i class="fas fa-chevron-down small"></i>
                 </a>
-
-                <div class="collapse {{ $arsipActive ? 'show' : '' }}" id="arsipSubmenu">
+                <div class="collapse {{ $arsipOpen ? 'show' : '' }}" id="adminArsipMenu">
                     <ul class="nav flex-column ms-4">
-                        @foreach(['ijazah', 'pangkat', 'cpns', 'jabatan', 'mutasi', 'pemberhentian'] as $type)
+                        @foreach($arsipJenisList as $jenis)
                             @php
-                                $isTypeActive = request()->is('admin/arsip/'.$type.'*');
+                                $slug = Str::slug($jenis->nama_jenis);
+                                $active = request()->is("admin/arsip/{$slug}*");
                             @endphp
                             <li class="nav-item">
-                                <a class="nav-link {{ $isTypeActive ? 'active' : '' }}"
-                                href="{{ route('admin.arsip.index', ['type' => $type]) }}"
-                                style="{{ $isTypeActive ? 'background-color: #cfe2ff; color: #084298;' : '' }}">
+                                <a class="nav-link {{ $active ? 'active' : '' }}"
+                                   href="{{ route('admin.arsip.index', ['type' => $slug]) }}">
                                     <i class="fas fa-angle-right me-1"></i>
-                                    {{ ucfirst($type) }}
+                                    {{ $jenis->nama_jenis }}
                                 </a>
                             </li>
                         @endforeach
@@ -72,96 +75,123 @@
                 </div>
             </li>
         @endif
+
+        <!-- user -->
+        @if(session('role') === 'user')
+            <!-- User: Data Peminjaman -->
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('user.transaksis.*') ? 'active' : '' }}"
+                   href="{{ route('user.transaksis.index') }}">
+                    <i class="fas fa-fw fa-file-alt"></i>
+                    <span class="sidebar-text">Data Peminjaman</span>
+                </a>
+            </li>
+             
+            <!-- User: Arsip -->
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('user.arsip.index') ? 'active' : '' }}"
+                href="{{ route('user.arsip.index') }}">
+                    <i class="fas fa-fw fa-folder-open"></i>
+                    <span class="sidebar-text">Master Arsip</span>
+                </a>
+            </li>
+ 
+        @endif
     </ul>
 </div>
 
-<!-- Sidebar Toggle Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const footer = document.querySelector('.footer');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const arsipMenuLink = document.getElementById('arsipMenuLink');
+{{-- Sidebar Toggle Script --}}
 
-        // Fungsi untuk toggle sidebar
-        function toggleSidebar(shouldCollapse = null) {
-            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
-            const collapse = shouldCollapse !== null ? shouldCollapse : !isCollapsed;
-            
-            if (collapse) {
-                sidebar.classList.add('sidebar-collapsed');
-                if (mainContent) mainContent.classList.add('main-content-collapsed');
-                if (footer) footer.classList.add('footer-collapsed');
-                
-                // Tutup semua submenu saat minimize
-                const submenu = document.getElementById('arsipSubmenu');
-                if (submenu && submenu.classList.contains('show')) {
-                    const bsCollapse = new bootstrap.Collapse(submenu, {
-                        toggle: true
-                    });
-                    bsCollapse.hide();
-                    if (arsipMenuLink) {
-                        arsipMenuLink.setAttribute('aria-expanded', 'false');
-                        arsipMenuLink.classList.add('collapsed');
-                    }
-                }
-                
-                // Hapus event listener klik luar
-                document.removeEventListener('click', handleClickOutside);
-            } else {
-                sidebar.classList.remove('sidebar-collapsed');
-                if (mainContent) mainContent.classList.remove('main-content-collapsed');
-                if (footer) footer.classList.remove('footer-collapsed');
-                
-                // Tambahkan event listener klik luar
-                document.addEventListener('click', handleClickOutside);
-            }
-            
-            // Simpan state sidebar di localStorage
-            localStorage.setItem('sidebarCollapsed', collapse);
-        }
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const sidebar       = document.getElementById('sidebar');
+  const mainContent   = document.getElementById('mainContent');
+  const footer        = document.querySelector('.footer');
+  const sidebarToggle = document.getElementById('sidebarToggle');
 
-        // Fungsi untuk menangani klik di luar sidebar
-        function handleClickOutside(event) {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggle = sidebarToggle && sidebarToggle.contains(event.target);
-            const isClickOnNavbar = event.target.closest('.navbar') !== null;
-            
-            if (!isClickInsideSidebar && !isClickOnToggle && !isClickOnNavbar) {
-                toggleSidebar(true); // Minimize sidebar
-                if(window.innerWidth < 768){ 
-                    toggleSidebar(false)
-                }else{
-                    
-                }
-            }
-        }
+  // handleClickOutside: tutup sidebar kalau klik di luar
+  function handleClickOutside(e) {
+    const inside = sidebar.contains(e.target);
+    const onToggle = sidebarToggle?.contains(e.target);
+    const onNav = !!e.target.closest('.navbar');
 
-        // Inisialisasi state sidebar dari localStorage
-        const savedState = localStorage.getItem('sidebarCollapsed');
-        const initialCollapse = savedState === 'true' || (window.innerWidth < 768 && savedState !== 'false');
-        
-        if (initialCollapse) {
-            toggleSidebar(false);
-        } else {
-            // Hanya pasang event listener jika sidebar expanded
-            document.addEventListener('click', handleClickOutside);
-        }
+    if (!inside && !onToggle && !onNav) {
+      toggleSidebar(true); 
+      if (window.innerWidth < 768) toggleSidebar(false, false);
+    }
+  }
 
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function() {
-                toggleSidebar();
-            });
-        }
+  /**
+   * @param {boolean|null} shouldCollapse   
+   * @param {boolean}     attachOutside     
+   */
+  function toggleSidebar(shouldCollapse = null, attachOutside = true) {
+    const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+    const doCollapse = shouldCollapse === null ? !isCollapsed : shouldCollapse;
 
-        // Handle klik menu arsip
-        if (arsipMenuLink) {
-            arsipMenuLink.addEventListener('click', function(e) {
-                if (sidebar.classList.contains('sidebar-collapsed')) {
-                    toggleSidebar(false);
-                }
-            });
-        }
+    if (doCollapse) {
+      // collapse: hide semua submenu & remove outside listener
+      sidebar.classList.add('sidebar-collapsed');
+      mainContent?.classList.add('main-content-collapsed');
+      footer?.classList.add('footer-collapsed');
+
+      document.querySelectorAll('#sidebar .collapse.show').forEach(el => {
+        bootstrap.Collapse.getOrCreateInstance(el, { toggle: false }).hide();
+      });
+      document.querySelectorAll('#sidebar [data-bs-toggle="collapse"]').forEach(t => {
+        t.classList.add('collapsed');
+        t.setAttribute('aria-expanded', 'false');
+      });
+
+      if (attachOutside) {
+        document.removeEventListener('click', handleClickOutside);
+      }
+    } else {
+      // expand: jangan close submenu; tambahkan outside listener jika diminta
+      sidebar.classList.remove('sidebar-collapsed');
+      mainContent?.classList.remove('main-content-collapsed');
+      footer?.classList.remove('footer-collapsed');
+
+      if (attachOutside) {
+        document.addEventListener('click', handleClickOutside);
+      }
+    }
+
+    localStorage.setItem('sidebarCollapsed', doCollapse);
+  }
+
+  // inisialisasi state dari localStorage / lebar layar
+  const saved = localStorage.getItem('sidebarCollapsed');
+  const startCollapsed = (saved === 'true') || (window.innerWidth < 768 && saved !== 'false');
+  if (startCollapsed) {
+    toggleSidebar(true, false);
+  } else {
+    toggleSidebar(false, true);
+  }
+
+  // toggle utama
+  sidebarToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleSidebar();
+  });
+
+  // override klik pada semua toggler submenu
+  document.querySelectorAll('#sidebar [data-bs-toggle="collapse"]').forEach(toggler => {
+    toggler.addEventListener('click', function (e) {
+      const targetSel = this.getAttribute('href') || this.dataset.bsTarget;
+      const collapseEl = document.querySelector(targetSel);
+
+      // kalau sidebar masih collapsed, expand dulu tanpa outside listener
+      if (sidebar.classList.contains('sidebar-collapsed')) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSidebar(false, false);
+        bootstrap.Collapse.getOrCreateInstance(collapseEl, { toggle: false }).show();
+        // setelah expand+show, kita bisa tambahkan outside listener
+        document.addEventListener('click', handleClickOutside);
+      }
+      // kalau sudah expand, biar bootstrap handle show/hide submenu
     });
+  });
+});
 </script>

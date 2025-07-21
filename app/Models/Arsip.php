@@ -18,6 +18,9 @@ class Arsip extends Model
         'nama_arsip',
         'file_path',
         'letak_berkas',
+         'arsip_jenis_id',
+    'nama_arsip',
+    'user_id',
         'tanggal_upload'
     ];
 

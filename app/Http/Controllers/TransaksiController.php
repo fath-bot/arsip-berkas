@@ -33,7 +33,7 @@ class TransaksiController extends Controller
         $belumDiambil = $transaksis->where('status', 'belum_diambil')->count();
         
         // Jenis arsip dari tabel arsip_jenis
-        $jenisList = \App\Models\ArsipJenis::pluck('nama_jenis')->toArray();
+        $jenisList = ArsipJenis::pluck('nama_jenis')->toArray();
 
         $transaksiChartData = [
             $sudahDikembalikan,
@@ -61,48 +61,67 @@ class TransaksiController extends Controller
         ));
     }
 
-    public function create()
-    {
-        $arsips = Arsip::all();
-        $jenis_arsips = ArsipJenis::all();
-        $role = session('role');
+    public function create(Request $request)
+{
+    $arsips = Arsip::all();
+    $jenis_arsips = ArsipJenis::all();
+    $selectedArsip = null;
 
-        return match ($role) {
-            'admin', 'superadmin' => view('admin.pages.transaksis.create', compact('arsips')),
-            'user' => view('user.transaksis.create', compact('arsips')),
-            default => abort(403, 'Unauthorized'),
-        };
+    if ($request->has('arsip_id')) {
+        $selectedArsip = Arsip::with('jenis')->find($request->arsip_id);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'arsip_id' => 'required|exists:arsip,id',
-            'tanggal_pinjam' => 'required|date',
-            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
-            'alasan' => 'required|string|max:500',
-            'status' => 'required|in:belum_diambil,dipinjam,dikembalikan',
+    return match (session('role')) {
+        'admin', 'superadmin' => view('admin.pages.transaksis.create', compact('arsips', 'selectedArsip')),
+        'user' => view('user.transaksis.create', compact('arsips', 'jenis_arsips', 'selectedArsip')),
+        default => abort(403),
+    };
+}
+
+
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'arsip_id' => 'nullable|exists:arsip,id',
+        'arsip_jenis_id' => 'required|exists:arsip_jenis,id',
+        'tanggal_pinjam' => 'required|date',
+        'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+        'alasan' => 'required|string|max:500',
+        'keterangan' => 'required|string|max:500',
+        'status' => 'required|in:belum_diambil,dipinjam,dikembalikan',
+    ]);
+
+    // Tambahkan arsip jika tidak dipilih (nullable)
+    if (empty($validated['arsip_id'])) {
+        $jenis = ArsipJenis::find($validated['arsip_jenis_id']);
+
+        $arsipBaru = Arsip::create([
+            'arsip_jenis_id' => $validated['arsip_jenis_id'],
+            'nama_arsip'     => $jenis->nama_jenis . ' - ' . $validated['alasan'],
+            'user_id'        => session('user_id'),
+            'letak_berkas'   => null,
         ]);
 
-        // Untuk user biasa, set user_id sebagai peminjam
-        if (session('role') === 'user') {
-            $validated['user_id'] = session('user_id');
-        } else {
-            // Admin bisa meminjamkan untuk orang lain?
-            // Tambahkan validasi user_id jika diperlukan
-        }
-
-        Transaksi::create($validated);
-
-        $redirectRoute = match (session('role')) {
-            'admin', 'superadmin' => 'admin.transaksis.index',
-            'user' => 'user.transaksis.index',
-            default => 'login'
-        };
-
-        return redirect()->route($redirectRoute)
-            ->with('toast_success', 'Data peminjaman berhasil ditambahkan');
+        $validated['arsip_id'] = $arsipBaru->id;
     }
+
+    if (session('role') === 'user') {
+        $validated['user_id'] = session('user_id');
+    }
+
+    Transaksi::create($validated);
+
+    $redirectRoute = match (session('role')) {
+        'admin', 'superadmin' => 'admin.transaksis.index',
+        'user' => 'user.transaksis.index',
+        default => 'login'
+    };
+
+    return redirect()->route($redirectRoute)
+        ->with('toast_success', 'Data peminjaman berhasil ditambahkan');
+}
+
+
 
     public function edit($id)
     {
@@ -117,6 +136,7 @@ class TransaksiController extends Controller
 
         $validated = $request->validate([
             'arsip_id' => 'required|exists:arsip,id',
+            'arsip_jenis_id' => 'required|exists:arsip_jenis,id',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'alasan' => 'required|string|max:500',

@@ -1,5 +1,5 @@
 {{-- edit.blade.php --}}
-@extends('admin.layouts.apps')
+@extends('components.apps')
 
 @section('title', 'Edit Transaksi Peminjaman')
 

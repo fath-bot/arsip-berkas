@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('nomor_arsip')->nullable();
             $table->string('nama_arsip');
             $table->string('file_path')->nullable();
-            $table->string('letak_berkas');
-            $table->date('tanggal_upload');
+            $table->string('letak_berkas')->nullable();
+            $table->date('tanggal_upload')->nullable();
             $table->timestamps();
         });
     }

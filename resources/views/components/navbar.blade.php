@@ -55,17 +55,26 @@
                 
                 <!-- User Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user"></i>
-                        <span class="d-none d-lg-inline">
-                            {{ session('user_name', 'Admin') }}
-                        </span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                         
-                        <a class="dropdown-item" href="{{ route('logout') }}"><i class="fas fa-sign-out-alt fa-sm me-2"></i> Logout</a>
-                    </div>
-                </li>
+    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-user"></i>
+        <span class="d-none d-lg-inline">
+            {{ session('user_name', 'Admin') }}
+        </span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li>
+            <!-- Tombol logout sebagai link dengan form tersembunyi -->
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Logout
+            </a>
+        </li>
+    </ul>
+</li>
+
             </ul>
         </div>
     </nav>

@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             'nip' => '1234567890',
             'role' => 'admin',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('admin'),
         ]);
 
         $user1 = User::create([
@@ -49,7 +49,8 @@ class DatabaseSeeder extends Seeder
             'SK Pemberhentian',
             'Sertifikasi',
             'Satya Lencana',
-            'Penilaian Prestasi Kerja (SKP)'
+            'Penilaian Prestasi Kerja (SKP)',
+            'lainnya'
         ];
 
         $jenisIds = [];

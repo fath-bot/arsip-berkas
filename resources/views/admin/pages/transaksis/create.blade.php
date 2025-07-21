@@ -1,4 +1,4 @@
-@extends('admin.layouts.apps')
+@extends('components.apps')
 
 @section('title', 'Tambah Transaksi Peminjaman')
 

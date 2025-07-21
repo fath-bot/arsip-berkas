@@ -1,4 +1,4 @@
-@extends('admin.layouts.apps')
+@extends('components.apps')
 
 @section('title', 'Data Peminjaman Berkas')
 
@@ -9,6 +9,8 @@
             <!-- Card Header -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h2 class="m-0 font-weight-bold text-primary">Data Peminjaman Berkas</h2>
+                <p>User ID: {{ auth()->id() }}</p>
+
                 <div class="card-toolbar">
                     <a href="{{ route('user.transaksis.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus-circle"></i> Tambah Peminjaman
@@ -60,6 +62,7 @@
                                 <th class="min-w-120px">Tanggal Pinjam</th>
                                 <th class="min-w-120px">Tanggal Kembali</th>
                                 <th class="min-w-200px">Alasan</th>
+                                <th class="min-w-200px">keterangan</th>
                                 <th class="min-w-120px">Status</th> 
                             </tr>
                         </thead>
@@ -75,10 +78,13 @@
                                         {{ \Carbon\Carbon::parse($transaksi->tanggal_kembali)->format('d/m/Y') }}
                                     @else
                                         <span class="text-muted">-</span>
-                                    @endif
+                                    @endif  
                                 </td>
                                 <td title="{{ $transaksi->alasan }}">
                                     {{ Str::limit($transaksi->alasan, 50) }}
+                                </td>
+                                <td title="{{ $transaksi->keterangan }}">
+                                    {{ Str::limit($transaksi->keterangan, 50) }}
                                 </td>
                                 <td>
                                     @php
