@@ -2,166 +2,118 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
+use App\Models\User;
 use App\Models\Arsip;
 use App\Models\ArsipJenis;
-use App\Models\LogAktivitas;
 use App\Models\Transaksi;
-use App\Models\User;
-use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Seed Users
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'nip' => '1234567890',
-            'role' => 'admin',
-            'password' => Hash::make('admin'),
-        ]);
-
-        $user1 = User::create([
-            'name' => 'Budi Santoso',
-            'email' => 'budi@example.com',
-            'nip' => '198012312345678901',
-            'role' => 'user',
-            'password' => Hash::make('password'),
-        ]);
-
-        $user2 = User::create([
-            'name' => 'Siti Rahayu',
-            'email' => 'siti@example.com',
-            'nip' => '198512312345678902',
-            'role' => 'user',
-            'password' => Hash::make('password'),
-        ]);
-
-        // Seed Arsip Jenis
-        $jenisArsip = [
-            'Ijazah',
-            'SK Pangkat',
-            'SK CPNS',
-            'SK Jabatan',
-            'SK Mutasi Unit',
-            'SK Pemberhentian',
-            'Sertifikasi',
-            'Satya Lencana',
-            'Penilaian Prestasi Kerja (SKP)',
-            'lainnya'
+        // === Seeder untuk User ===
+        $users = [
+            ['name' => 'Super Admin', 'email' => 'superadmin@example.com', 'nip' => '199900012023001', 'role' => 'superadmin', 'password' => Hash::make('password123')],
+            ['name' => 'Admin SDM', 'email' => 'admin_sdm@example.com', 'nip' => '199900022023002', 'role' => 'admin', 'password' => Hash::make('admin')],
+            ['name' => 'Admin Keuangan', 'email' => 'admin_keuangan@example.com', 'nip' => '199900032023003', 'role' => 'admin', 'password' => Hash::make('password123')],
+            ['name' => 'Budi Santoso', 'email' => 'budi@example.com', 'nip' => '199900042023004', 'role' => 'user', 'password' => Hash::make('password')],
+            ['name' => 'Siti Rahayu', 'email' => 'siti@example.com', 'nip' => '199900052023005', 'role' => 'user', 'password' => Hash::make('password123')],
         ];
-
-        $jenisIds = [];
-        foreach ($jenisArsip as $jenis) {
-            $jenisModel = ArsipJenis::create(['nama_jenis' => $jenis]);
-            $jenisIds[$jenis] = $jenisModel->id;
+        foreach ($users as $user) {
+            User::create($user);
         }
 
-        // Seed Arsip
-        $arsipData = [
-            [
-                'user_id' => $user1->id,
-                'arsip_jenis_id' => $jenisIds['Ijazah'],
-                'nomor_arsip' => 'IJZ-2023-001',
-                'nama_arsip' => 'Ijazah S1 Budi Santoso',
-                'file_path' => 'ijazah/budi_s1.pdf',
-                'letak_berkas' => 'Lemari A, Rak 3',
-                'tanggal_upload' => '2023-06-15',
-            ],
-            [
-                'user_id' => $user1->id,
-                'arsip_jenis_id' => $jenisIds['SK Pangkat'],
-                'nomor_arsip' => 'SKP-2023-001',
-                'nama_arsip' => 'SK Kenaikan Pangkat Budi Santoso',
-                'file_path' => 'sk_pangkat/budi_2023.pdf',
-                'letak_berkas' => 'Lemari B, Rak 1',
-                'tanggal_upload' => '2023-07-20',
-            ],
-            [
-                'user_id' => $user2->id,
-                'arsip_jenis_id' => $jenisIds['SK CPNS'],
-                'nomor_arsip' => 'SKC-2020-001',
-                'nama_arsip' => 'SK CPNS Siti Rahayu',
-                'file_path' => 'sk_cpns/siti_2020.pdf',
-                'letak_berkas' => 'Lemari C, Rak 2',
-                'tanggal_upload' => '2020-05-10',
-            ],
-            [
-                'user_id' => $user2->id,
-                'arsip_jenis_id' => $jenisIds['Sertifikasi'],
-                'nomor_arsip' => 'SER-2022-001',
-                'nama_arsip' => 'Sertifikasi Kompetensi Siti Rahayu',
-                'file_path' => 'sertifikasi/siti_2022.pdf',
-                'letak_berkas' => 'Lemari D, Rak 4',
-                'tanggal_upload' => '2022-11-30',
-            ],
+        // === Seeder untuk ArsipJenis ===
+        $jenisArsipList = [
+            'Ijazah', 'SK Pangkat', 'SK CPNS', 'Sertifikasi', 'SK Jabatan',
+            'SK Mutasi', 'SK Pemberhentian', 'Surat Tugas', 'Sertifikat Diklat', 'Penilaian Kinerja',
         ];
-
-        foreach ($arsipData as $data) {
-            Arsip::create($data);
+        foreach ($jenisArsipList as $jenis) {
+            ArsipJenis::create(['nama_jenis' => $jenis]);
         }
 
-        // Seed Transaksi
-        $transaksiData = [
-            [
-                'user_id' => $user1->id,
-                'arsip_id' => 1,
-                'tanggal_pinjam' => '2023-08-01',
-                'tanggal_kembali' => '2023-08-10',
-                'status' => 'dikembalikan',
-                'keterangan' => 'Untuk keperluan pengajuan beasiswa',
-                'alasan' => 'Pengajuan beasiswa pascasarjana',
-            ],
-            [
-                'user_id' => $user2->id,
-                'arsip_id' => 3,
-                'tanggal_pinjam' => '2023-08-05',
-                'tanggal_kembali' => null,
-                'status' => 'dipinjam',
-                'keterangan' => 'Untuk verifikasi administrasi',
-                'alasan' => 'Verifikasi data kepegawaian',
-            ],
-            [
-                'user_id' => $user1->id,
-                'arsip_id' => 2,
-                'tanggal_pinjam' => '2023-08-15',
-                'tanggal_kembali' => null,
-                'status' => 'belum_diambil',
-                'keterangan' => 'Persyaratan kenaikan pangkat',
-                'alasan' => 'Pengajuan kenaikan pangkat berikutnya',
-            ],
-        ];
-
-        foreach ($transaksiData as $data) {
-            Transaksi::create($data);
+        // === Seeder untuk Arsip === (dummy 100 arsip)
+        $userIds = User::pluck('id')->toArray();
+        $jenisIds = ArsipJenis::pluck('id')->toArray();
+        for ($i = 1; $i <= 100; $i++) {
+            Arsip::create([
+                'nama_arsip' => 'Arsip Ke-' . $i,
+                'arsip_jenis_id' => $jenisIds[array_rand($jenisIds)],
+                'user_id' => $userIds[array_rand($userIds)],
+                'letak_berkas' => 'Lemari ' . rand(1, 10) . ' - Rak ' . rand(1, 5),
+            ]);
         }
 
-        // Seed Log Aktivitas
-        $logData = [
-            [
-                'user_id' => $admin->id,
-                'aktivitas' => 'Membuat user baru: Budi Santoso',
-            ],
-            [
-                'user_id' => $admin->id,
-                'aktivitas' => 'Mengupload arsip: IJZ-2023-001',
-            ],
-            [
-                'user_id' => $user1->id,
-                'aktivitas' => 'Meminjam arsip: SK Kenaikan Pangkat Budi Santoso',
-            ],
-            [
-                'user_id' => $user2->id,
-                'aktivitas' => 'Meminjam arsip: SK CPNS Siti Rahayu',
-            ],
+        // === Seeder untuk Transaksi ===
+        $arsipIds = Arsip::pluck('id')->toArray();
+        $statusList = ['belum_diambil', 'dipinjam', 'dikembalikan'];
+        $keteranganList = [
+            'Untuk keperluan pengajuan beasiswa', 'Verifikasi administrasi', 'Persyaratan kenaikan pangkat',
+            'Pengajuan sertifikasi ulang', 'Verifikasi data kepegawaian', 'Pengajuan kredit bank',
+            'Proses mutasi kerja', 'Pengajuan pensiun', 'Pendaftaran pendidikan lanjut',
+            'Pengajuan sertifikasi kompetensi', 'Proses penilaian kinerja', 'Pengajuan tunjangan kinerja',
+            'Verifikasi data untuk promosi', 'Pengajuan cuti panjang', 'Proses perubahan jabatan',
+        ];
+        $alasanList = [
+            'Pengajuan beasiswa pascasarjana', 'Verifikasi data kepegawaian', 'Pengajuan kenaikan pangkat berikutnya',
+            'Sertifikasi kompetensi profesi', 'Proses mutasi antar unit kerja', 'Pengajuan pensiun dini',
+            'Pendaftaran program magister', 'Renewal sertifikasi profesional', 'Penilaian kinerja tahunan',
+            'Pengajuan tunjangan khusus', 'Persyaratan promosi jabatan', 'Pengajuan izin belajar',
+            'Proses perubahan status kepegawaian', 'Verifikasi untuk kenaikan gaji', 'Pengajuan asuransi kesehatan',
         ];
 
-        foreach ($logData as $data) {
-            LogAktivitas::create($data);
-        }
+        $transaksiData = [];
+        for ($i = 1; $i <= 400; $i++) {
+            $userId = $userIds[array_rand($userIds)];
+            $arsipId = $arsipIds[array_rand($arsipIds)];
+            $arsip = Arsip::find($arsipId);
+            $jenisId = $arsip->arsip_jenis_id ?? $jenisIds[array_rand($jenisIds)];
+            $tanggalPinjam = Carbon::today()->subDays(rand(1, 365));
+            $status = $statusList[array_rand($statusList)];
+            $tanggalKembali = null;
 
-        $this->command->info('Database seeded successfully!');
+            if ($status === 'dikembalikan') {
+                $tanggalKembali = $tanggalPinjam->copy()->addDays(rand(1, 30));
+            } elseif ($status === 'dipinjam' && rand(0, 1)) {
+                $tanggalKembali = $tanggalPinjam->copy()->addDays(rand(31, 60));
+            }
+
+            $transaksiData[] = [
+                'user_id' => $userId,
+                'arsip_id' => $arsipId,
+                'jenis_id' => $jenisId,
+                'status' => $status,
+                'keterangan' => $keteranganList[array_rand($keteranganList)],
+                'alasan' => $alasanList[array_rand($alasanList)],
+                'tanggal_pinjam' => $tanggalPinjam->format('Y-m-d'),
+                'tanggal_kembali' => $tanggalKembali?->format('Y-m-d'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        Transaksi::insert($transaksiData);
+
+        // === Seeder untuk Log Aktivitas ===
+        $aktivitasList = [
+            'Login ke sistem', 'Menambah arsip baru', 'Memperbarui data arsip', 'Menghapus arsip',
+            'Melakukan peminjaman arsip', 'Mengembalikan arsip', 'Membatalkan peminjaman',
+            'Mengubah status peminjaman', 'Menambah pengguna baru', 'Memperbarui profil pengguna',
+            'Mengubah peran pengguna', 'Menghapus pengguna', 'Menambah jenis arsip baru',
+            'Mengekspor data arsip', 'Mengimpor data arsip',
+        ];
+        $logData = [];
+        for ($i = 1; $i <= 50; $i++) {
+            $logData[] = [
+                'user_id' => $userIds[array_rand($userIds)],
+                'aktivitas' => $aktivitasList[array_rand($aktivitasList)],
+                'created_at' => Carbon::now()->subDays(rand(0, 30)),
+                'updated_at' => now(),
+            ];
+        }
+        DB::table('log_aktivitas')->insert($logData);
     }
 }

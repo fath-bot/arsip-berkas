@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\LogAktivitas;
 
 class AuthController extends Controller
 {
@@ -94,6 +95,11 @@ class AuthController extends Controller
                 'arsip_count'     => $user->arsips()->count(),
                 'transaksi_count' => $user->transaksis()->count(),
             ]);
+            LogAktivitas::create([
+                'user_id'   => $user->id,
+                'aktivitas' => "$user->name,  login ke sistem",
+            ]);
+
 
             // Beri respons JSON untuk AJAX
             return response()->json([
@@ -122,6 +128,11 @@ class AuthController extends Controller
                     'logged_in' => true,
                     'role'      => $user->role,
                 ]);
+                LogAktivitas::create([
+                    'user_id'   => $user->id,
+                    'aktivitas' => "$user->name,  login ke sistem",
+                ]);
+
 
                 return response()->json([
                     'success'  => true,
@@ -134,6 +145,8 @@ class AuthController extends Controller
                         }
                     ),
                 ]);
+                
+                
             }
 
             return response()->json([
@@ -146,11 +159,25 @@ class AuthController extends Controller
     /**
      * Proses logout (flush session).
      */
-    public function logout(Request $request)
-    {
-        $request->session()->flush();
-        return redirect()->route('login')->with('success', 'Anda berhasil logout.');
-    }
+   public function logout(Request $request)
+{
+    // ambil ID user sebelum session dihapus
+    $userId   = session('user_id');
+    $userName = session('user_name');
+
+    // log aktivitas logout
+    LogAktivitas::create([
+        'user_id'   => $userId,
+        'aktivitas' => $userName . ', logout dari sistem',
+    ]);
+
+    // flush session
+    $request->session()->flush();
+
+    return redirect()->route('login')->with('success','Anda berhasil logout.');
+}
+
+
 
     /**
      * Cek status login (untuk API testing).

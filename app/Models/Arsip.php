@@ -12,17 +12,15 @@ class Arsip extends Model
     protected $table = 'arsip';
 
     protected $fillable = [
-        'user_id',
-        'arsip_jenis_id',
-        'nomor_arsip',
-        'nama_arsip',
-        'file_path',
-        'letak_berkas',
-         'arsip_jenis_id',
-    'nama_arsip',
     'user_id',
-        'tanggal_upload'
-    ];
+    'arsip_jenis_id',
+    'nomor_arsip',
+    'nama_arsip',
+    'file_path',
+    'letak_berkas',
+    'tanggal_upload'
+];
+
 
     public function user()
     {

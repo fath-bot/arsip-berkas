@@ -56,22 +56,24 @@
                     <table id="kt_transaksis_table" class="table align-middle table-row-dashed fs-6 gy-5">
                         <thead>
                             <tr class="fw-bold text-muted bg-light">
-                                <th class="min-w-50px">No</th>
-                                <th class="min-w-150px">Nama Berkas</th>
+                                <th class="min-w-50px">No</th> 
                                 <th class="min-w-150px">Jenis Berkas</th>
+                                
+                                <th class="min-w-200px">keterangan</th>
                                 <th class="min-w-120px">Tanggal Pinjam</th>
                                 <th class="min-w-120px">Tanggal Kembali</th>
                                 <th class="min-w-200px">Alasan</th>
-                                <th class="min-w-200px">keterangan</th>
                                 <th class="min-w-120px">Status</th> 
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($transaksis as $transaksi)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $transaksi->arsip->nama_arsip }}</td>
-                                <td>{{ $transaksi->arsip->jenis->nama_jenis }}</td>
+                                <td>{{ $loop->iteration }}</td>  
+                                <td>{{ $transaksi->jenis->nama_jenis   ?? '-' }}</td> 
+                                <td title="{{ $transaksi->keterangan }}">
+                                    {{ Str::limit($transaksi->keterangan, 50) }}
+                                </td>
                                 <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_pinjam)->format('d/m/Y') }}</td>
                                 <td>
                                     @if($transaksi->tanggal_kembali)
@@ -83,9 +85,7 @@
                                 <td title="{{ $transaksi->alasan }}">
                                     {{ Str::limit($transaksi->alasan, 50) }}
                                 </td>
-                                <td title="{{ $transaksi->keterangan }}">
-                                    {{ Str::limit($transaksi->keterangan, 50) }}
-                                </td>
+                                
                                 <td>
                                     @php
                                         $statusClasses = [
