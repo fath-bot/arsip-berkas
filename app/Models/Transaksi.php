@@ -18,7 +18,16 @@ class Transaksi extends Model
         'tanggal_kembali',
         'status',
         'keterangan',
-        'alasan'
+        'alasan',
+    ];
+
+    /**
+     * Cast atribut tanggal_pinjam dan tanggal_kembali
+     * menjadi Carbon instances otomatis.
+     */
+    protected $casts = [
+        'tanggal_pinjam'  => 'date',   // 'date' sama dengan 'datetime:Y-m-d'
+        'tanggal_kembali' => 'date',
     ];
 
     public function user()
@@ -29,11 +38,5 @@ class Transaksi extends Model
     public function arsip()
     {
         return $this->belongsTo(Arsip::class);
-    }
-
-    public function index()
-    {
-        $transaksiCount = Transaksi::count();
-        return view('admin.dashboard', compact('transaksiCount'));
     }
 }

@@ -44,7 +44,7 @@ class ArsipJenisController extends Controller
             'nama_jenis' => 'required|string|max:255|unique:arsip_jenis,nama_jenis,'.$id
         ]);
 
-        $jenis->update(['nama_jenis' => $request->nama_jenis]);
+        $jenis->update(['nama_jenis' => $request->input('nama_jenis')]);
 
         return redirect()->route('admin.arsip_jenis.index')
             ->with('success', 'Jenis arsip berhasil diperbarui');

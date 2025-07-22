@@ -5,147 +5,160 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    // Menampilkan halaman login
+    /**
+     * Tampilkan halaman login.
+     */
     public function showLoginForm()
     {
-        // Jika sudah login, redirect ke dashboard
         if (session('logged_in')) {
-            return redirect()->route('admin.dashboard');
+            // Redirect sesuai role yang disimpan di session
+            return redirect()->route(
+                match (session('role')) {
+                    'admin'      => 'admin.dashboard',
+                    'superadmin' => 'superadmin.dashboard',
+                    'user'       => 'user.dashboard',
+                    default      => 'login',
+                }
+            );
         }
-        
+
         return view('auth.login');
     }
 
-    // Proses login
+    /**
+     * Proses login via API eksternal, dengan fallback ke login lokal.
+     */
     public function login(Request $request)
-{
-    $request->validate([
-        'username' => 'required|string',
-        'password' => 'required|string'
-    ]);
-
-    try {
-        $client = new Client();
-        $response = $client->post('https://map.bpkp.go.id/api/v5/login', [
-            'form_params' => [
-                'username' => $request->username,
-                'password' => $request->password,
-                'kelas_user' => 0,
-            ],
-            'headers' => [
-                'Accept' => 'application/json',
-            ]
+    {
+        // Validasi input
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $data = json_decode($response->getBody(), true);
-        $nip = $data['message']['nipbaru'] ?? null;
-        $name = $data['message']['name'] ?? null;
-        $email = $nip . '@example.com';
+        $username = $request->input('username');
+        $password = $request->input('password');
 
-       // Cek apakah user sudah ada
-        $user = \App\Models\User::where('nip', $nip)->first();
-
-        if (!$user) {
-            $user = \App\Models\User::create([
-                'name' => $name,
-                'email' => $email,
-                'nip' => $nip,
-                'role' => 'user', // default role
-                'password' => bcrypt(\Illuminate\Support\Str::random(16)) // password dummy agar valid
+        // Coba login ke API eksternal
+        try {
+            $client = new Client();
+            $response = $client->post('https://map.bpkp.go.id/api/v5/login', [
+                'form_params' => [
+                    'username'   => $username,
+                    'password'   => $password,
+                    'kelas_user' => 0,
+                ],
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
             ]);
-        } else {
-            // Update nama & email jika berubah
+
+            $data = json_decode($response->getBody(), true);
+
+            // Ambil data yang diperlukan
+            $nip   = $data['message']['nipbaru'] ?? null;
+            $name  = $data['message']['name']    ?? $username;
+            $email = $nip ? "{$nip}@example.com" : "{$username}@example.com";
+            $token = $data['access_token']       ?? null;
+
+            // Cari atau buat user di database lokal
+            $user = User::firstOrCreate(
+                ['nip' => $nip],
+                [
+                    'name'     => $name,
+                    'email'    => $email,
+                    'role'     => 'user',
+                    'password' => bcrypt(\Illuminate\Support\Str::random(16)),
+                ]
+            );
+
+            // Update nama/email jika ada perubahan
             $user->update([
-                'name' => $name,
-                'email' => $email
-                // role tidak diubah, karena mungkin sudah diedit oleh admin
+                'name'  => $name,
+                'email' => $email,
+            ]);
+
+            // Simpan data ke session
+            session([
+                'user_id'         => $user->id,
+                'user_name'       => $user->name,
+                'user_nip'        => $user->nip,
+                'user_token'      => $token,
+                'logged_in'       => true,
+                'role'            => $user->role,
+                'arsip_count'     => $user->arsips()->count(),
+                'transaksi_count' => $user->transaksis()->count(),
+            ]);
+
+            // Beri respons JSON untuk AJAX
+            return response()->json([
+                'success'  => true,
+                'redirect' => route(
+                    match ($user->role) {
+                        'admin'      => 'admin.dashboard',
+                        'superadmin' => 'superadmin.dashboard',
+                        'user'       => 'user.dashboard',
+                        default      => 'login',
+                    }
+                ),
             ]);
         }
+        catch (\Exception $e) {
+            // Fallback: login lokal
+            $user = User::where('email', $username)
+                        ->orWhere('nip', $username)
+                        ->first();
 
+            if ($user && Hash::check($password, $user->password)) {
+                session([
+                    'user_id'   => $user->id,
+                    'user_name' => $user->name,
+                    'user_nip'  => $user->nip,
+                    'logged_in' => true,
+                    'role'      => $user->role,
+                ]);
 
-        // Simpan ke session
-        // Di dalam method login(), setelah membuat/update user:
-        session([
-            'user_id' => $user->id,
-            'user_name' => $user->name,
-            'user_nip' => $user->nip,
-            'user_token' => $data['access_token'] ?? null,
-            'logged_in' => true,
-            'role' => $user->role,
-            // Tambahkan ini untuk akses cepat:
-            'arsip_count' => $user->arsips->count(),
-            'transaksi_count' => $user->transaksis->count()
-        ]);
-
-        // Redirect berdasarkan role
-        $redirectRoute = match ($user->role) {
-            'admin' => route('admin.dashboard'),
-            'superadmin' => route('superadmin.dashboard'),
-            'user' => route('user.dashboard'),
-            default => route('login'),
-        };
-
-        return response()->json([
-            'success' => true,
-            'redirect' => $redirectRoute
-        ]);
-
-    } catch (\Exception $e) {
-        // Login lokal fallback jika gagal API
-        $user = \App\Models\User::where('email', $request->username)
-            ->orWhere('nip', $request->username)
-            ->first();
-
-        if ($user && \Hash::check($request->password, $user->password)) {
-            session([
-                'user_id' => $user->id,
-                'user_name' => $user->name,
-                'user_nip' => $user->nip,
-                'logged_in' => true,
-                'role' => $user->role
-            ]);
-
-            $redirectRoute = match ($user->role) {
-                'admin' => route('admin.dashboard'),
-                'superadmin' => route('superadmin.dashboard'),
-                'user' => route('user.dashboard'),
-                default => route('login'),
-            };
+                return response()->json([
+                    'success'  => true,
+                    'redirect' => route(
+                        match ($user->role) {
+                            'admin'      => 'admin.dashboard',
+                            'superadmin' => 'superadmin.dashboard',
+                            'user'       => 'user.dashboard',
+                            default      => 'login',
+                        }
+                    ),
+                ]);
+            }
 
             return response()->json([
-                'success' => true,
-                'redirect' => $redirectRoute
-            ]);
+                'success' => false,
+                'message' => 'Login gagal: kredensial salah atau akun tidak ditemukan.'
+            ], 401);
         }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Login gagal: kredensial salah atau akun tidak ditemukan.'
-        ], 401);
     }
-}
 
-
-    // Proses logout
+    /**
+     * Proses logout (flush session).
+     */
     public function logout(Request $request)
     {
-        // Hapus semua data session
         $request->session()->flush();
-        
-        // Redirect ke halaman login dengan pesan
-        return redirect()->route('login')->with('success', 'Anda berhasil logout');
+        return redirect()->route('login')->with('success', 'Anda berhasil logout.');
     }
 
-    // Method untuk mengecek status login
+    /**
+     * Cek status login (untuk API testing).
+     */
     public function checkAuth()
     {
         return response()->json([
-            'authenticated' => session('logged_in', false)
+            'authenticated' => session('logged_in', false),
         ]);
     }
 }
