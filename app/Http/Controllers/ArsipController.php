@@ -6,7 +6,7 @@ use App\Models\Arsip;
 use App\Models\ArsipJenis;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class ArsipController extends Controller
@@ -37,15 +37,18 @@ class ArsipController extends Controller
         }
 
         // USER: tampilkan semua arsip miliknya tanpa filter arsip
-        $items = Arsip::with(['arsip'])
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->get();
+$userId = session('user_id'); // karena tidak menggunakan Auth default
 
-        return view('user.arsip.index', [
-            'items' => $items,
-            'title' => 'Semua Arsip Saya',
-        ]);
+$items = Arsip::with(['jenis'])
+    ->where('user_id', $userId)
+    ->latest()
+    ->get();
+
+return view('user.arsip.index', [
+    'items' => $items,
+    'title' => 'Semua Arsip Saya',
+]);
+
     }
 
     // CREATE: Admin
@@ -126,7 +129,7 @@ class ArsipController extends Controller
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
         $item = Arsip::where('arsip_jenis_id', $jenisArsip->id)->findOrFail($id);
 
-        if (request()->is('user/*') && $item->user_id !== Auth::id()) {
+        if (request()->is('user/*') && $item->user_id !== session('user_id')) {
             abort(403, 'Tidak boleh akses arsip orang lain.');
         }
 

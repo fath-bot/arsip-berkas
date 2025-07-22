@@ -74,6 +74,15 @@
                     </ul>
                 </div>
             </li>
+            <!-- Admin: Log Aktivitas -->
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}"
+                  href="{{ route('admin.logs.index') }}">
+                    <i class="fas fa-fw fa-clipboard-list"></i>
+                    <span class="sidebar-text">Log Aktivitas</span>
+                </a>
+            </li>
+
         @endif
 
         <!-- user -->

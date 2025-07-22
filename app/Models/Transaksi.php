@@ -14,6 +14,7 @@ class Transaksi extends Model
     protected $fillable = [
         'user_id',
         'arsip_id',
+        'jenis_id',
         'tanggal_pinjam',
         'tanggal_kembali',
         'status',
@@ -39,4 +40,10 @@ class Transaksi extends Model
     {
         return $this->belongsTo(Arsip::class);
     }
+   public function jenis()
+{
+    return $this->belongsTo(ArsipJenis::class, 'jenis_id');
+}
+
+
 }

@@ -9,6 +9,11 @@
             <!-- Card Header -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h2 class="m-0 font-weight-bold text-primary">Data Peminjaman Berkas</h2>
+                <div class="card-toolbar">
+                    <a href="{{ route('admin.transaksis.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Tambah Peminjaman
+                    </a>
+                </div>
             </div>
 
             <!-- Card Body -->
@@ -34,7 +39,8 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $transaksi->arsip->nama_arsip }}</td>
-                                <td>{{ $transaksi->arsip->jenis->nama_jenis }}</td>
+                                <td>{{ $transaksi->jenis->nama_jenis ?? '-' }}</td>
+
                                 <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_pinjam)->format('d/m/Y') }}</td>
                                 <td>
                                     @if($transaksi->tanggal_kembali)
