@@ -18,6 +18,35 @@
 
             <!-- Card Body -->
             <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label>Jenis Berkas</label>
+                        <select id="filterJenis" class="form-select form-select-sm">
+                            <option value="">Semua Jenis</option>
+                            @foreach($jenisList as $jenis)
+                                <option value="{{ $jenis->nama_jenis }}">{{ $jenis->nama_jenis }}</option>
+                            @endforeach
+                        </select>
+
+                    </div>
+                    <div class="col-md-3">
+                        <label>Status</label>
+                        <select id="filterStatus" class="form-control form-control-sm">
+                            <option value="">Semua Status</option>
+                            <option value="belum_diambil">Belum Diambil</option>
+                            <option value="dipinjam">Dipinjam</option>
+                            <option value="dikembalikan">Sudah Dikembalikan</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Dari Tanggal</label>
+                        <input type="date" id="filterFromDate" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label>Sampai Tanggal</label>
+                        <input type="date" id="filterToDate" class="form-control form-control-sm">
+                    </div>
+                </div>
                 <!-- Table Section -->
                 <div class="table-responsive">
                     <table id="kt_transaksis_table" class="table align-middle table-row-dashed fs-6 gy-5">
@@ -38,7 +67,7 @@
                             @foreach ($transaksis as $transaksi)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $transaksi->arsip->nama_arsip }}</td>
+                                <td>{{ $transaksi->arsip->nama_arsip ?? '-' }}</td>
                                 <td>{{ $transaksi->jenis->nama_jenis ?? '-' }}</td>
 
                                 <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_pinjam)->format('d/m/Y') }}</td>
@@ -126,31 +155,68 @@
 </div>
 @endsection
 
-@push('styles')
-<link href="{{ asset('themes/admin/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet">
+ @push('styles') 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 @endpush
 
-@push('scripts')
-<script src="{{ asset('themes/admin/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-<script>
-    function setDeleteAction(url) {
-        const form = document.getElementById('deleteForm');
-        form.action = url;
-    }
+@push('scripts') 
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const table = $('#kt_transaksis_table').DataTable({
-            responsive: true,
-            language: {
-                lengthMenu: "Tampilkan _MENU_ baris",
-                search: "Cari:",
-                zeroRecords: "Data tidak ditemukan",
-                info: "Menampilkan _START_ hingga _END_ dari _TOTAL_ baris",
-            },
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const table = $('#kt_transaksis_table').DataTable({
+        responsive: true,
+        language: {
+            search: "Cari:",
+            zeroRecords: "Data tidak ditemukan",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            paginate: {
+                previous: "Sebelumnya",
+                next: "Berikutnya"
+            }
+        }
+    });
+
+    // Filter Jenis Berkas (kolom ke-2)
+    $('#filterJenis').on('change', function () {
+        table.column(2).search(this.value).draw();
+    });
+
+    // Filter Status (kolom ke-7)
+    $('#filterStatus').on('change', function () {
+        const statusValue = this.value;
+
+        table.column(7).search(statusValue ? statusValue.replace(/_/g, ' ') : '', true, false).draw();
+    });
+
+    // Filter Tanggal Pinjam (kolom ke-3)
+    $('#filterFromDate, #filterToDate').on('change', function () {
+        const fromDateStr = $('#filterFromDate').val(); // yyyy-mm-dd
+        const toDateStr = $('#filterToDate').val();     // yyyy-mm-dd
+
+        $.fn.dataTable.ext.search.push(function (settings, data) {
+            const tableDateStr = data[3]; // kolom tanggal pinjam (format: dd/mm/yyyy)
+            const [day, month, year] = tableDateStr.split('/');
+            const tableDate = new Date(`${year}-${month}-${day}`);
+
+            let fromDate = fromDateStr ? new Date(fromDateStr) : null;
+            let toDate = toDateStr ? new Date(toDateStr) : null;
+
+            return (!fromDate && !toDate) ||
+                   (!fromDate && tableDate <= toDate) ||
+                   (fromDate <= tableDate && !toDate) ||
+                   (fromDate <= tableDate && tableDate <= toDate);
         });
 
-        // Tooltip
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        table.draw();
+        $.fn.dataTable.ext.search.pop(); // hindari akumulasi filter
     });
+});
+
 </script>
 @endpush
+

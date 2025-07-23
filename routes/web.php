@@ -20,12 +20,12 @@ Route::get('/test-login', fn() => view('api-test'))->name('test-login');
 // Protected routes (session-based middleware)
 Route::middleware([CheckSession::class])->group(function () {
 
-    // Dashboard per role
+    // Dashboard per role (gunakan controller yang sama, dibedakan dalam controller-nya)
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
     Route::get('/superadmin/dashboard', fn() => view('admin.ubah-role'))
         ->name('superadmin.dashboard');
-    Route::get('/user/dashboard', fn() => view('user.dashboard'))
+    Route::get('/user/dashboard', [AdminDashboardController::class, 'index'])
         ->name('user.dashboard');
 
     // ADMIN routes
@@ -52,7 +52,7 @@ Route::middleware([CheckSession::class])->group(function () {
             Route::delete('{type}/{id}', [ArsipController::class, 'destroy'])->name('destroy');
         });
 
-        // Log Aktivitas (tanpa middleware karena sudah dicek di controller)
+        // Log Aktivitas
         Route::prefix('logs')->name('logs.')->group(function () {
             Route::get('/', [LogController::class, 'index'])->name('index');
         });
@@ -76,4 +76,9 @@ Route::middleware([CheckSession::class])->group(function () {
         // Arsip user (semua milik dia, tanpa jenis)
         Route::get('arsip', [ArsipController::class, 'index'])->name('arsip.index');
     });
+    Route::post('/admin/transaksis/{id}/konfirmasi', [TransaksiController::class, 'konfirmasi'])
+    ->name('admin.transaksis.konfirmasi');
+Route::post('/admin/transaksis/{id}/tolak', [TransaksiController::class, 'tolak'])
+    ->name('admin.transaksis.tolak');
+
 });

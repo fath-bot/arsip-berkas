@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
         // === Seeder untuk User ===
         $users = [
             ['name' => 'Super Admin', 'email' => 'superadmin@example.com', 'nip' => '199900012023001', 'role' => 'superadmin', 'password' => Hash::make('password123')],
-            ['name' => 'Admin SDM', 'email' => 'admin_sdm@example.com', 'nip' => '199900022023002', 'role' => 'admin', 'password' => Hash::make('admin')],
-            ['name' => 'Admin Keuangan', 'email' => 'admin_keuangan@example.com', 'nip' => '199900032023003', 'role' => 'admin', 'password' => Hash::make('password123')],
+            ['name' => 'Admin SDM', 'email' => 'admin1@example.com', 'nip' => '199900022023002', 'role' => 'admin', 'password' => Hash::make('admin')],
+            ['name' => 'Admin Keuangan', 'email' => 'admin@example.com', 'nip' => '199900032023003', 'role' => 'admin', 'password' => Hash::make('admin')],
             ['name' => 'Budi Santoso', 'email' => 'budi@example.com', 'nip' => '199900042023004', 'role' => 'user', 'password' => Hash::make('password')],
-            ['name' => 'Siti Rahayu', 'email' => 'siti@example.com', 'nip' => '199900052023005', 'role' => 'user', 'password' => Hash::make('password123')],
+            ['name' => 'Siti Rahayu', 'email' => 'siti@example.com', 'nip' => '199900052023005', 'role' => 'user', 'password' => Hash::make('password')],
         ];
         foreach ($users as $user) {
             User::create($user);
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         // === Seeder untuk ArsipJenis ===
         $jenisArsipList = [
             'Ijazah', 'SK Pangkat', 'SK CPNS', 'Sertifikasi', 'SK Jabatan',
-            'SK Mutasi', 'SK Pemberhentian', 'Surat Tugas', 'Sertifikat Diklat', 'Penilaian Kinerja',
+            'SK Mutasi', 'SK Pemberhentian', 'Surat Tugas', 'Sertifikat Diklat', 'lainnya',
         ];
         foreach ($jenisArsipList as $jenis) {
             ArsipJenis::create(['nama_jenis' => $jenis]);
@@ -74,6 +74,8 @@ class DatabaseSeeder extends Seeder
             $jenisId = $arsip->arsip_jenis_id ?? $jenisIds[array_rand($jenisIds)];
             $tanggalPinjam = Carbon::today()->subDays(rand(1, 365));
             $status = $statusList[array_rand($statusList)];
+           //tambahin status is aproved
+            $isApproved = in_array($status, ['dipinjam', 'dikembalikan']);
             $tanggalKembali = null;
 
             if ($status === 'dikembalikan') {
@@ -87,6 +89,7 @@ class DatabaseSeeder extends Seeder
                 'arsip_id' => $arsipId,
                 'jenis_id' => $jenisId,
                 'status' => $status,
+                 'is_approved'     => $isApproved,
                 'keterangan' => $keteranganList[array_rand($keteranganList)],
                 'alasan' => $alasanList[array_rand($alasanList)],
                 'tanggal_pinjam' => $tanggalPinjam->format('Y-m-d'),

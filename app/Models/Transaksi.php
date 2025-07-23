@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Transaksi extends Model
 {
     use HasFactory;
@@ -20,15 +19,14 @@ class Transaksi extends Model
         'status',
         'keterangan',
         'alasan',
+        'is_approved',
+        'alasan_penolakan',
     ];
 
-    /**
-     * Cast atribut tanggal_pinjam dan tanggal_kembali
-     * menjadi Carbon instances otomatis.
-     */
     protected $casts = [
-        'tanggal_pinjam'  => 'date',   // 'date' sama dengan 'datetime:Y-m-d'
+        'tanggal_pinjam'  => 'date',
         'tanggal_kembali' => 'date',
+        'is_approved' => 'boolean',
     ];
 
     public function user()
@@ -40,10 +38,9 @@ class Transaksi extends Model
     {
         return $this->belongsTo(Arsip::class);
     }
-   public function jenis()
-{
-    return $this->belongsTo(ArsipJenis::class, 'jenis_id');
-}
 
-
+    public function jenis()
+    {
+        return $this->belongsTo(ArsipJenis::class, 'jenis_id');
+    }
 }
