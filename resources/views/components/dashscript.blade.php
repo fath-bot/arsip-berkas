@@ -85,7 +85,7 @@
             const pieChart = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Belum Dikembalikan', 'Sudah Dikembalikan', 'Belum Diambil'],
+                    labels: ['di pinjam', 'Sudah Dikembalikan', 'Belum Diambil'],
                     datasets: [{
                         data: [
                             {{ $belumDikembalikan ?? 0 }},

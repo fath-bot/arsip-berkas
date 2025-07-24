@@ -7,11 +7,12 @@ use App\Models\ArsipJenis;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ArsipController extends Controller
 {
-    // INDEX: ADMIN dan USER (tergantung route)
+    // INDEX: ADMIN dan USER
     public function index(?string $type = null)
     {
         $arsipJenisList = ArsipJenis::all();
@@ -22,7 +23,6 @@ class ArsipController extends Controller
             $jenisArsip = $arsipJenisList->first(fn($j) => Str::slug($j->nama_jenis) === $type)
                 ?? abort(404, "Jenis arsip “{$type}” tidak ditemukan.");
 
-            // ADMIN: ambil semua arsip berdasarkan jenis
             $items = Arsip::with(['user', 'jenis'])
                 ->where('arsip_jenis_id', $jenisArsip->id)
                 ->latest()
@@ -36,22 +36,21 @@ class ArsipController extends Controller
             ]);
         }
 
-        // USER: tampilkan semua arsip miliknya tanpa filter arsip
-$userId = session('user_id'); // karena tidak menggunakan Auth default
+        // USER
+        $userId = session('user_id');
 
-$items = Arsip::with(['jenis'])
-    ->where('user_id', $userId)
-    ->latest()
-    ->get();
+        $items = Arsip::with(['jenis'])
+            ->where('user_id', $userId)
+            ->latest()
+            ->get();
 
-return view('user.arsip.index', [
-    'items' => $items,
-    'title' => 'Semua Arsip Saya',
-]);
-
+        return view('user.arsip.index', [
+            'items' => $items,
+            'title' => 'Semua Arsip Saya',
+        ]);
     }
 
-    // CREATE: Admin
+    // CREATE
     public function create($type)
     {
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
@@ -60,7 +59,7 @@ return view('user.arsip.index', [
         return view('admin.pages.arsip.create', compact('type', 'jenisArsip', 'users'));
     }
 
-    // STORE: Admin
+    // STORE
     public function store(Request $request, $type)
     {
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
@@ -69,20 +68,31 @@ return view('user.arsip.index', [
             'user_id' => 'required|exists:users,id',
             'nomor_arsip' => 'nullable|string|max:255',
             'nama_arsip' => 'required|string|max:255',
-            'file_path' => 'nullable|string|max:255',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'letak_berkas' => 'nullable|string|max:255',
             'tanggal_upload' => 'required|date',
         ]);
 
-        $validated['arsip_jenis_id'] = $jenisArsip->id;
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('arsip', 'public');
+        }
 
-        Arsip::create($validated);
+        Arsip::create([
+            'user_id' => $validated['user_id'],
+            'arsip_jenis_id' => $jenisArsip->id,
+            'nomor_arsip' => $validated['nomor_arsip'] ?? null,
+            'nama_arsip' => $validated['nama_arsip'],
+            'file_path' => $filePath,
+            'letak_berkas' => $validated['letak_berkas'] ?? null,
+            'tanggal_upload' => $validated['tanggal_upload'],
+        ]);
 
         return redirect()->route('admin.arsip.index', ['type' => $type])
             ->with('success', 'Data berhasil disimpan');
     }
 
-    // EDIT: Admin
+    // EDIT
     public function edit($type, $id)
     {
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
@@ -92,7 +102,7 @@ return view('user.arsip.index', [
         return view('admin.pages.arsip.edit', compact('type', 'item', 'users', 'jenisArsip'));
     }
 
-    // UPDATE: Admin
+    // UPDATE
     public function update(Request $request, $type, $id)
     {
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
@@ -102,28 +112,49 @@ return view('user.arsip.index', [
             'user_id' => 'required|exists:users,id',
             'nomor_arsip' => 'nullable|string|max:255',
             'nama_arsip' => 'required|string|max:255',
-            'file_path' => 'nullable|string|max:255',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'letak_berkas' => 'nullable|string|max:255',
             'tanggal_upload' => 'required|date',
         ]);
 
-        $item->update($validated);
+        // Hapus file lama jika upload baru
+        if ($request->hasFile('file')) {
+            if ($item->file_path && Storage::disk('public')->exists($item->file_path)) {
+                Storage::disk('public')->delete($item->file_path);
+            }
+            $item->file_path = $request->file('file')->store('arsip', 'public');
+        }
+
+        $item->update([
+            'user_id' => $validated['user_id'],
+            'nomor_arsip' => $validated['nomor_arsip'] ?? null,
+            'nama_arsip' => $validated['nama_arsip'],
+            'letak_berkas' => $validated['letak_berkas'] ?? null,
+            'tanggal_upload' => $validated['tanggal_upload'],
+            'file_path' => $item->file_path, // update jika file baru di-upload
+        ]);
 
         return redirect()->route('admin.arsip.index', ['type' => $type])
             ->with('success', 'Data berhasil diperbarui');
     }
 
-    // DESTROY: Admin
+    // DESTROY
     public function destroy($type, $id)
     {
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
         $item = Arsip::where('arsip_jenis_id', $jenisArsip->id)->findOrFail($id);
+
+        // Hapus file dari storage jika ada
+        if ($item->file_path && Storage::disk('public')->exists($item->file_path)) {
+            Storage::disk('public')->delete($item->file_path);
+        }
+
         $item->delete();
 
         return back()->with('success', 'Data arsip berhasil dihapus');
     }
 
-    // SHOW: Admin dan User (detail)
+    // SHOW
     public function show($type, $id)
     {
         $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
