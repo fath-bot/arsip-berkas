@@ -27,7 +27,6 @@
                                 <option value="{{ $jenis->nama_jenis }}">{{ $jenis->nama_jenis }}</option>
                             @endforeach
                         </select>
-
                     </div>
                     <div class="col-md-3">
                         <label>Status</label>
@@ -47,6 +46,7 @@
                         <input type="date" id="filterToDate" class="form-control form-control-sm">
                     </div>
                 </div>
+
                 <!-- Table Section -->
                 <div class="table-responsive">
                     <table id="kt_transaksis_table" class="table align-middle table-row-dashed fs-6 gy-5">
@@ -69,7 +69,6 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $transaksi->arsip->nama_arsip ?? '-' }}</td>
                                 <td>{{ $transaksi->jenis->nama_jenis ?? '-' }}</td>
-
                                 <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_pinjam)->format('d/m/Y') }}</td>
                                 <td>
                                     @if($transaksi->tanggal_kembali)
@@ -105,17 +104,41 @@
                                     <div class="d-flex justify-content-end gap-2">
                                         <a href="{{ route('admin.transaksis.edit', $transaksi->id) }}" 
                                            class="btn btn-icon btn-active-light-primary w-30px h-30px"
-                                           data-bs-toggle="tooltip" 
                                            title="Edit">
                                             <i class="fas fa-edit fs-4"></i>
                                         </a>
-                                        <button class="btn btn-icon btn-active-light-danger w-30px h-30px" 
-                                           data-bs-toggle="modal" 
-                                           data-bs-target="#deleteModal" 
-                                           onclick="setDeleteAction('{{ route('admin.transaksis.destroy', $transaksi->id) }}')"
-                                           title="Hapus">
+
+                                        <!-- Tombol Hapus & Modal -->
+                                        <button type="button" class="btn btn-icon btn-active-light-danger w-30px h-30px"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal-{{ $transaksi->id }}"
+                                            title="Hapus">
                                             <i class="fas fa-trash fs-4"></i>
                                         </button>
+
+                                        <!-- Modal Konfirmasi Hapus -->
+                                        <div class="modal fade" id="deleteModal-{{ $transaksi->id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ $transaksi->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('admin.transaksis.destroy', $transaksi->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel-{{ $transaksi->id }}">Konfirmasi Hapus</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Yakin ingin menghapus transaksi peminjaman <strong>#{{ $transaksi->id }}</strong>? Tindakan ini tidak dapat dibatalkan.</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                                            <button type="submit" class="btn btn-danger">Hapus</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </td>
                             </tr>
@@ -124,49 +147,22 @@
                     </table>
                 </div>
 
-                <!-- Delete Confirmation Modal -->
-                <div class="modal fade" tabindex="-1" id="deleteModal" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <form id="deleteForm" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Yakin ingin menghapus data transaksi peminjaman ini? Tindakan ini tidak dapat dibatalkan.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-danger">
-                                        <span class="indicator-label">Hapus</span>   
-                                    </button>
-                                </div>  
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
 </div>
 @endsection
 
- @push('styles') 
-<!-- DataTables CSS -->
+@push('styles') 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 @endpush
 
 @push('scripts') 
-<!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const table = $('#kt_transaksis_table').DataTable({
         responsive: true,
         language: {
@@ -181,25 +177,21 @@
         }
     });
 
-    // Filter Jenis Berkas (kolom ke-2)
     $('#filterJenis').on('change', function () {
         table.column(2).search(this.value).draw();
     });
 
-    // Filter Status (kolom ke-7)
     $('#filterStatus').on('change', function () {
         const statusValue = this.value;
-
         table.column(7).search(statusValue ? statusValue.replace(/_/g, ' ') : '', true, false).draw();
     });
 
-    // Filter Tanggal Pinjam (kolom ke-3)
     $('#filterFromDate, #filterToDate').on('change', function () {
-        const fromDateStr = $('#filterFromDate').val(); // yyyy-mm-dd
-        const toDateStr = $('#filterToDate').val();     // yyyy-mm-dd
+        const fromDateStr = $('#filterFromDate').val();
+        const toDateStr = $('#filterToDate').val();
 
         $.fn.dataTable.ext.search.push(function (settings, data) {
-            const tableDateStr = data[3]; // kolom tanggal pinjam (format: dd/mm/yyyy)
+            const tableDateStr = data[3];
             const [day, month, year] = tableDateStr.split('/');
             const tableDate = new Date(`${year}-${month}-${day}`);
 
@@ -213,10 +205,8 @@
         });
 
         table.draw();
-        $.fn.dataTable.ext.search.pop(); // hindari akumulasi filter
+        $.fn.dataTable.ext.search.pop();
     });
 });
-
 </script>
 @endpush
-

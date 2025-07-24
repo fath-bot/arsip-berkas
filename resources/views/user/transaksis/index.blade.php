@@ -21,7 +21,7 @@
                         <select id="filterJenis" class="form-control form-control-sm">
                             <option value="">Semua Jenis</option>
                             @foreach ($jenisList as $jenis)
-                                <option value="{{ $jenis }}">{{ $jenis }}</option>
+                                <option value="{{ $jenis->nama_jenis }}">{{ $jenis->nama_jenis }}</option>
                             @endforeach
                         </select>
                     </div>

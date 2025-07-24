@@ -25,7 +25,7 @@
                     ],
                     [
                         'count' => $belumDikembalikan ?? 0,
-                        'label' => 'Berkas Belum Dikembalikan',
+                        'label' => 'Berkas di pinjam',
                         'route' => route('admin.transaksis.index'),
                         'icon' => 'fa-exchange-alt',
                         'color' => 'warning'
@@ -93,7 +93,7 @@
                         </div>
                         <div class="mt-4 text-center small">
                             <span class="mr-2">
-                                <i class="fas fa-circle text-warning"></i> Belum Dikembalikan
+                                <i class="fas fa-circle text-warning"></i> di pinjam
                             </span>
                             <span class="mr-2">
                                 <i class="fas fa-circle text-success"></i> Sudah Dikembalikan
@@ -185,7 +185,7 @@
             const pieChart = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Belum Dikembalikan', 'Sudah Dikembalikan', 'Belum Diambil'],
+                    labels: ['di pinjam', 'Sudah Dikembalikan', 'Belum Diambil'],
                     datasets: [{
                         data: [
                             {{ $belumDikembalikan ?? 0 }},

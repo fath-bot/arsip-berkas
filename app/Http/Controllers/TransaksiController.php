@@ -43,7 +43,7 @@ class TransaksiController extends Controller
 
         // Data untuk chart (opsional)
         $transaksiChartData   = [$sudahDikembalikan, $belumDikembalikan, $belumDiambil];
-        $transaksiChartLabels = ['Sudah Dikembalikan', 'Belum Dikembalikan', 'Belum Diambil'];
+        $transaksiChartLabels = ['Sudah Dikembalikan', 'di pinjam', 'Belum Diambil'];
 
         // Pilih view berdasarkan role
         $view = match ($role) {
@@ -231,24 +231,25 @@ class TransaksiController extends Controller
      * Reject the specified transaction.
      */
     public function tolak(Request $request, $id)
-    {
-        $transaksi = Transaksi::findOrFail($id);
+{
+    $transaksi = Transaksi::findOrFail($id);
 
-        $request->validate([
-            'keterangan' => 'required|string|max:500',
-        ]);
+    $request->validate([
+        'alasan_penolakan' => 'required|string|max:500',
+    ]);
 
-        $transaksi->update([
-            'is_approved' => false,
-            'status'      => null,
-            'keterangan'  => $request->keterangan,
-        ]);
+    $transaksi->update([
+        'is_approved' => false,
+        'status'      => null,
+        'alasan_penolakan'  => $request->alasan_penolakan,
+    ]);
 
-        LogAktivitas::create([
-            'user_id'   => session('user_id'),
-            'aktivitas' => "Menolak transaksi #{$id}"
-        ]);
+    LogAktivitas::create([
+        'user_id'   => session('user_id'),
+        'aktivitas' => "Menolak transaksi #{$id}"
+    ]);
 
-        return back()->with('toast_error', 'Transaksi berhasil ditolak.');
-    }
+    return back()->with('toast_error', 'Transaksi berhasil ditolak.');
+}
+
 }

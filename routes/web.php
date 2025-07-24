@@ -33,6 +33,10 @@ Route::middleware([CheckSession::class])->group(function () {
 
         // Transaksi
         Route::resource('transaksis', TransaksiController::class);
+        Route::post('transaksis/{id}/delete', [TransaksiController::class, 'destroy'])->name('admin.transaksis.forceDelete');
+        Route::post('transaksis/{id}/delete', [TransaksiController::class, 'destroy'])->name('admin.transaksis.forceDelete');
+
+
 
         // Arsip (by jenis)
         Route::get('arsip', function () {

@@ -13,8 +13,8 @@ class LogController extends Controller
         if (!in_array(session('role'), ['admin', 'superadmin'])) {
             abort(403, 'Unauthorized');
         }
+$logs = LogAktivitas::with('user')->latest()->get();
 
-        $logs = LogAktivitas::with('user')->latest()->paginate(20);
 
         return view('admin.pages.logs.index', compact('logs'));
     }

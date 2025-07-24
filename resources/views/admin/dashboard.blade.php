@@ -25,7 +25,7 @@
                 ],
                 [
                     'count' => $belumDikembalikan ?? 0,
-                    'label' => 'Berkas Belum Dikembalikan',
+                    'label' => 'Berkas di pinjam',
                     'route' => route('admin.transaksis.index'),
                     'icon' => 'fa-exchange-alt',
                     'color' => 'warning'
@@ -68,7 +68,7 @@
         @endforeach
     </div>
 
-    <!-- Konfirmasi Peminjaman -->
+     <!-- Permintaan Konfirmasi -->
     <div class="card mb-4 shadow">
         <div class="card-header bg-primary text-white">
             Permintaan Konfirmasi Peminjaman ({{ $jumlahMenungguKonfirmasi ?? 0 }})
@@ -76,27 +76,17 @@
         <div class="card-body">
             @forelse($menungguKonfirmasi as $item)
                 <div class="mb-3">
-                    <strong>{{ $item->user->name ?? '-' }}</strong> mengajukan pinjam 
-                    {{ $item->arsip?->nama_arsip ?? 'Jenis: ' . ($item->arsip->jenis->nama_jenis ?? '-') }} <br>
+                    <strong>{{ $item->user->name ?? '-' }}</strong> mengajukan pinjam
+                    {{ $item->arsip->nama_arsip ?? 'Jenis: ' . ($item->arsip->jenis->nama_jenis ?? '-') }}<br>
                     <small>{{ $item->created_at->diffForHumans() }}</small>
-                    <div class="mt-1">
-                        {{-- Form POST untuk Konfirmasi --}}                        
-                        <form action="{{ route('admin.transaksis.konfirmasi', $item->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Yakin ingin konfirmasi transaksi ini?')">Konfirmasi</button>
-                        </form>
 
-                        {{-- Form POST untuk Tolak --}}                        
-                        <form action="{{ route('admin.transaksis.tolak', $item->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="keterangan" value="Tidak memenuhi syarat.">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin tolak?')">Tolak</button>
-                        </form>
-                    </div>
+                    {{-- Tombol & Modal Actions --}}
+                    <x-modals.transaksi :item="$item" />
                 </div>
             @empty
                 <p class="text-muted">Tidak ada permintaan baru.</p>
             @endforelse
+
         </div>
     </div>
 
@@ -125,7 +115,7 @@
                         <canvas id="myPieChart"></canvas>
                     </div>
                     <div class="mt-4 text-center small">
-                        <span class="mr-2"><i class="fas fa-circle text-warning"></i> Belum Dikembalikan</span>
+                        <span class="mr-2"><i class="fas fa-circle text-warning"></i> di pinjam</span>
                         <span class="mr-2"><i class="fas fa-circle text-success"></i> Sudah Dikembalikan</span>
                         <span class="mr-2"><i class="fas fa-circle text-danger"></i> Belum Diambil</span>
                     </div>
@@ -139,13 +129,14 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const chartData = {!! json_encode($transaksiChartItems) !!};
     const transactionChart = new ApexCharts(document.querySelector("#transaksi_chart"), {
         series: [{
             name: 'Total Peminjaman',
-            data: {!! json_encode($transaksiChartItems->pluck('count')) !!}
+            data: chartData.map(item => item.count)
         }],
         chart: {
             type: 'area',
@@ -159,20 +150,43 @@ document.addEventListener('DOMContentLoaded', function () {
             width: 2
         },
         xaxis: {
-            categories: {!! json_encode($transaksiChartItems->pluck('label')) !!},
-            labels: { style: { colors: '#6c757d' } }
+            categories: chartData.map(item => item.label),
+            labels: {
+                style: {
+                    colors: '#6c757d'
+                }
+            }
         },
-        yaxis: {
-            labels: { style: { colors: '#6c757d' } }
+        tooltip: {
+            custom: function({ dataPointIndex }) {
+                const item = chartData[dataPointIndex] ?? {
+                    label: '-',
+                    count: 0,
+                    dikembalikan: 0,
+                    dipinjam: 0,
+                    belum_diambil: 0
+                };
+
+                return `
+                    <div class="px-2 py-1">
+                        <strong>${item.label}</strong><br>
+                        Total: ${item.count}<br>
+                        <span style="color:green">✔️ Dikembalikan: ${item.dikembalikan}</span><br>
+                        <span style="color:orange">📂 Dipinjam: ${item.dipinjam}</span><br>
+                        <span style="color:red">❗ Belum Diambil: ${item.belum_diambil}</span>
+                    </div>
+                `;
+            }
         }
     });
+
     transactionChart.render();
 
     const pieCtx = document.getElementById('myPieChart').getContext('2d');
     const pieChart = new Chart(pieCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Belum Dikembalikan', 'Sudah Dikembalikan', 'Belum Diambil'],
+            labels: ['Dipinjam', 'Sudah Dikembalikan', 'Belum Diambil'],
             datasets: [{
                 data: [
                     {{ $belumDikembalikan ?? 0 }},
@@ -180,9 +194,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     {{ $belumDiambil ?? 0 }}
                 ],
                 backgroundColor: [
-                    'rgba(246, 194, 62, 0.8)',
-                    'rgba(28, 200, 138, 0.8)',
-                    'rgba(231, 74, 59, 0.8)'
+                    'rgba(246, 194, 62, 0.8)', // Orange
+                    'rgba(28, 200, 138, 0.8)', // Green
+                    'rgba(231, 74, 59, 0.8)'   // Red
                 ],
                 borderColor: [
                     'rgba(246, 194, 62, 1)',
