@@ -26,8 +26,13 @@
                 <div class="modal-body">
                     <p>Anda yakin ingin <strong>menyetujui</strong> transaksi ini?</p>
                     <ul class="list-unstyled">
-                        <li><strong>Nama Berkas:</strong> {{ $item->arsip->nama ?? '-' }}</li>
-                        <li><strong>Letak Fisik:</strong> {{ $item->arsip->lokasi ?? '-' }}</li>
+                        <ul class="list-unstyled">
+                            <li><strong>Nama Berkas:</strong> {{ $item->keterangan ?? '-' }}</li>
+                            <li><strong>Letak Fisik:</strong> {{ $item->letak_berkas ?? '-' }}</li>
+                        </ul>
+                        <li><strong>Jenis Arsip:</strong> {{ $item->jenis->nama_jenis ?? '-' }}</li>
+                        <li><strong>Tanggal Pinjam:</strong> {{ $item->tanggal_pinjam->format('d-m-Y') }}</li>
+                        <li><strong>Status:</strong> <span class="text-secondary">Menunggu Konfirmasi</span></li>
                     </ul>
                 </div>
                 <div class="modal-footer">

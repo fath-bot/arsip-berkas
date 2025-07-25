@@ -28,6 +28,7 @@
                             <tr class="fw-bold text-muted bg-light">
                                 <th class="min-w-50px">No</th>
                                 <th class="min-w-200px">Nama Berkas</th>
+                                <th class="min-w-200px">Keterangan Arsip</th>
                                 <th class="min-w-150px">Tanggal Upload</th>
                                 <th class="min-w-200px">Letak Berkas</th>
                                 <th class="min-w-200px">Berkas Digital</th>
@@ -39,6 +40,7 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $item->nama_arsip ?? '-' }}</td>
+                                <td>{{ $item->keterangan_arsip ?? '-' }}</td>
                                 <td>{{ $item->tanggal_upload ? \Carbon\Carbon::parse($item->tanggal_upload)->format('d/m/Y') : '-' }}</td>
                                 <td>{{ $item->letak_berkas ?? '-' }}</td>
                                 <td>

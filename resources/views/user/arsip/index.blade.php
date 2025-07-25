@@ -39,6 +39,7 @@
                                 <tr>
                                     <th>Nama Arsip</th>
                                     <th>Jenis Arsip</th>
+                                    <th>keterangan Arsip</th>
                                     <th>Tanggal Upload</th>
                                     <th>Letak Berkas</th>
                                     <th class="min-w-200px">Berkas Digital</th>
@@ -52,6 +53,7 @@
                                         data-jenis="{{ strtolower($item->jenis->nama_jenis ?? '') }}">
                                         <td>{{ $item->nama_arsip }}</td>
                                         <td>{{ $item->jenis->nama_jenis ?? '-' }}</td>
+                                        <td>{{ $item->keterangan_arsip ?? '-' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_upload)->format('d M Y') }}</td>
                                         <td>{{ $item->letak_berkas ?? '-' }}</td>
                                         <td>

@@ -52,18 +52,18 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 {{ $headerClass }}">
-                <h6 class="m-0 text-white">Status Peminjaman Terakhir</h6>
+                <h6 class="m-0 text-white">Status permintaan Terakhir</h6>
             </div>
             <div class="card-body">
                 @if ($pending)
-                    <p><strong>Nama Arsip:</strong> {{ $pending->keterangan ?? '-' }}</p>
+                    <p><strong>Keterangan Arsip:</strong> {{ $pending->keterangan ?? '-' }}</p>
                     <p><strong>Jenis Arsip:</strong> {{ $pending->jenis->nama_jenis ?? '-' }}</p>
                     <p><strong>Tanggal Pinjam:</strong> {{ $pending->tanggal_pinjam ?? '-' }}</p>
                     <p><strong>Status:</strong>
                         <span class="text-secondary">Menunggu Konfirmasi</span>
                     </p>
                 @else
-                    <p><strong>Nama Arsip:</strong> {{ $terakhir->keterangan ?? '-' }}</p>
+                    <p><strong>Keterangan Arsip:</strong> {{ $terakhir->keterangan ?? '-' }}</p>
                     <p><strong>Jenis Arsip:</strong> {{ $terakhir->jenis->nama_jenis ?? '-' }}</p>
                     <p><strong>Tanggal Pinjam:</strong> {{ $terakhir->tanggal_pinjam ?? '-' }}</p>
                     <p><strong>Status:</strong>
@@ -97,17 +97,7 @@
                             {{ $berlangsung->status === 'dipinjam' ? 'Sedang Dipinjam' : 'Belum Diambil' }}
                         </span>
 
-                        @php
-                            $tglPinjam = \Carbon\Carbon::parse($berlangsung->tanggal_pinjam);
-                            $totalDays = $tglPinjam->diffInDays($tglKembali);
-                            $usedDays = $tglPinjam->diffInDays(now());
-                            $progress = $totalDays > 0 ? min(100, ($usedDays / $totalDays) * 100) : 100;
-                        @endphp
-                        <div class="progress mt-3" style="height: 20px;">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ $progress }}%">
-                                {{ round($progress) }}%
-                            </div>
-                        </div>
+                        <div></div>
 
                         <a href="{{ route($transaksisRoute) }}" class="btn btn-sm btn-outline-secondary mt-3">
                             <i class="fas fa-eye"></i> Lihat Detail Transaksi

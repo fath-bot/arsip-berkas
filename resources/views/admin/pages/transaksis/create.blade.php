@@ -30,7 +30,9 @@
               <div class="col-lg-8 fv-row">
                 <select name="user_id" class="form-select form-select-lg form-select-solid @error('user_id') is-invalid @enderror" required>
                   <option value="" disabled selected>-- Pilih User --</option>
-                  
+                  @foreach ($users as $user)
+                    <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->nip }})</option>
+                  @endforeach
                 </select>
                 @error('user_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
               </div>
@@ -42,7 +44,9 @@
               <div class="col-lg-8 fv-row">
                 <select id="selectJenis" name="arsip_jenis_id" class="form-select form-select-lg form-select-solid @error('arsip_jenis_id') is-invalid @enderror" required>
                   <option value="" disabled selected>-- Pilih Jenis Arsip --</option>
-                   
+                  @foreach ($jenis_arsips as $jenis)
+                    <option value="{{ $jenis->id }}" {{ old('arsip_jenis_id') == $jenis->id ? 'selected' : '' }}>{{ $jenis->nama_jenis }}</option>
+                  @endforeach
                 </select>
                 @error('arsip_jenis_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
               </div>
@@ -54,7 +58,7 @@
               <div class="col-lg-8 fv-row">
                 <select id="selectArsip" name="arsip_id" class="form-select form-select-lg form-select-solid @error('arsip_id') is-invalid @enderror" required>
                   <option value="" disabled selected>-- Pilih Berkas --</option>
-                  {{-- Opsinya akan terisi otomatis via JS --}}
+                  {{-- Akan diisi otomatis via JS --}}
                 </select>
                 @error('arsip_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
               </div>
@@ -96,7 +100,7 @@
               </div>
             </div>
 
-            {{-- Pilih Status --}}
+            {{-- Status --}}
             <div class="row mb-2">
               <label class="col-lg-4 col-form-label required fw-bold fs-6">Status</label>
               <div class="col-lg-8 fv-row">
@@ -135,7 +139,7 @@
       .forEach(a => {
         const opt = document.createElement('option');
         opt.value = a.id;
-        opt.textContent = `${a.nama_arsip} (${a.jenis.nama_jenis})`;
+        opt.textContent = `${a.nama_arsip}`;
         target.appendChild(opt);
       });
 
