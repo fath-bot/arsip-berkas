@@ -66,7 +66,7 @@ class ArsipController extends Controller
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'nomor_arsip' => 'nullable|string|max:255',
+            'keterangan_arsip' => 'nullable|string|max:255',
             'nama_arsip' => 'required|string|max:255',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'letak_berkas' => 'nullable|string|max:255',
@@ -81,7 +81,7 @@ class ArsipController extends Controller
         Arsip::create([
             'user_id' => $validated['user_id'],
             'arsip_jenis_id' => $jenisArsip->id,
-            'nomor_arsip' => $validated['nomor_arsip'] ?? null,
+            'keterangan_arsip' => $validated['keterangan_arsip'] ?? null,
             'nama_arsip' => $validated['nama_arsip'],
             'file_path' => $filePath,
             'letak_berkas' => $validated['letak_berkas'] ?? null,
@@ -95,7 +95,8 @@ class ArsipController extends Controller
     // EDIT
     public function edit($type, $id)
     {
-        $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
+        $jenisArsip = ArsipJenis::whereRaw('LOWER(REPLACE(nama_jenis, " ", "-")) = ?', [$type])->firstOrFail();
+
         $item = Arsip::where('arsip_jenis_id', $jenisArsip->id)->findOrFail($id);
         $users = User::all();
 
@@ -105,16 +106,17 @@ class ArsipController extends Controller
     // UPDATE
     public function update(Request $request, $type, $id)
     {
-        $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
+        $jenisArsip = ArsipJenis::whereRaw('LOWER(REPLACE(nama_jenis, " ", "-")) = ?', [$type])->firstOrFail();
+
         $item = Arsip::where('arsip_jenis_id', $jenisArsip->id)->findOrFail($id);
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'nomor_arsip' => 'nullable|string|max:255',
+            'keterangan_arsip' => 'nullable|string|max:255', 
             'nama_arsip' => 'required|string|max:255',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'letak_berkas' => 'nullable|string|max:255',
-            'tanggal_upload' => 'required|date',
+            'tanggal_upload' => 'nullable|date',
         ]);
 
         // Hapus file lama jika upload baru
@@ -127,11 +129,11 @@ class ArsipController extends Controller
 
         $item->update([
             'user_id' => $validated['user_id'],
-            'nomor_arsip' => $validated['nomor_arsip'] ?? null,
+            'keterangan_arsip' => $validated['keterangan_arsip']  ?? null, 
             'nama_arsip' => $validated['nama_arsip'],
             'letak_berkas' => $validated['letak_berkas'] ?? null,
             'tanggal_upload' => $validated['tanggal_upload'],
-            'file_path' => $item->file_path, // update jika file baru di-upload
+            'file_path' => $item->file_path  ?? null, // update jika file baru di-upload
         ]);
 
         return redirect()->route('admin.arsip.index', ['type' => $type])
@@ -140,8 +142,8 @@ class ArsipController extends Controller
 
     // DESTROY
     public function destroy($type, $id)
-    {
-        $jenisArsip = ArsipJenis::where('nama_jenis', $type)->firstOrFail();
+    {$jenisArsip = ArsipJenis::whereRaw('LOWER(REPLACE(nama_jenis, " ", "-")) = ?', [$type])->firstOrFail();
+
         $item = Arsip::where('arsip_jenis_id', $jenisArsip->id)->findOrFail($id);
 
         // Hapus file dari storage jika ada

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use App\Models\Arsip;
 use App\Models\ArsipJenis;
+use App\Models\User;
 use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
 
@@ -68,22 +69,25 @@ class TransaksiController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
-    {
-        $arsips        = Arsip::with('jenis')->get();
-        $jenis_arsips  = ArsipJenis::all();
-        $selectedArsip = null;
+   public function create(Request $request)
+{
+    $arsips        = Arsip::with('jenis')->get();
+    $jenis_arsips   = ArsipJenis::all(); // <- pastikan ini ada dan pakai nama sama persis
+    $users         = User::where('role', 'user')->get();
+    $selectedArsip = null;
 
-        if ($request->filled('arsip_id')) {
-            $selectedArsip = Arsip::with('jenis')->find($request->arsip_id);
-        }
-
-        return match (session('role')) {
-            'admin', 'superadmin' => view('admin.pages.transaksis.create', compact('arsips', 'selectedArsip')),
-            'user'                => view('user.transaksis.create', compact('arsips', 'jenis_arsips', 'selectedArsip')),
-            default               => abort(403),
-        };
+    if ($request->filled('arsip_id')) {
+        $selectedArsip = Arsip::with('jenis')->find($request->arsip_id);
     }
+
+    return match (session('role')) {
+        'admin', 'superadmin' => view('admin.pages.transaksis.create', compact('arsips', 'jenis_arsips', 'users', 'selectedArsip')),
+        'user'                => view('user.transaksis.create', compact('arsips', 'jenis_arsips', 'selectedArsip')),
+        default               => abort(403),
+    };
+}
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -95,8 +99,10 @@ class TransaksiController extends Controller
             'jenis_id'        => 'nullable|exists:arsip_jenis,id',
             'tanggal_pinjam'  => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+            'status'          => 'nullable',
             'alasan'          => 'required|string|max:500',
             'keterangan'      => 'required|string|max:500',
+            'is_approved'    => 'nullable|boolean',
         ]);
 
         if (!empty($validated['arsip_id'])) {
@@ -157,6 +163,7 @@ class TransaksiController extends Controller
             'alasan'            => 'required|string|max:500',
             'keterangan'        => 'required|string|max:500',
             'status_konfirmasi' => 'nullable|in:pending,ditolak,disetujui',
+            'status'            => 'nullable',
         ]);
 
         if (!empty($validated['arsip_id'])) {

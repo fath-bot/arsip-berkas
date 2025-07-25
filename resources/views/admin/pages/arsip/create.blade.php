@@ -33,8 +33,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="nomor_arsip" class="form-label">Nomor Arsip</label>
-                        <input type="text" name="nomor_arsip" id="nomor_arsip" class="form-control" value="{{ old('nomor_arsip') }}">
+                        <label for="keterangan_arsip" class="form-label">Keterangan Arsip</label>
+                        <input type="text" name="keterangan_arsip" id="keterangan_arsip" class="form-control" value="{{ old('keterangan_arsip') }}">
                     </div>
                     <div class="mb-3">
                         <label for="nama_arsip" class="form-label">Nama Arsip</label>
@@ -52,6 +52,7 @@
                         <label for="tanggal_upload" class="form-label">Tanggal Upload</label>
                         <input type="date" name="tanggal_upload" id="tanggal_upload" class="form-control" value="{{ old('tanggal_upload', now()->format('Y-m-d')) }}" required>
                     </div>
+                    <div class=" text-end">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
                     <a href="{{ route('admin.arsip.index', ['type' => $type]) }}" class="btn btn-secondary">Batal</a>
                 </form>

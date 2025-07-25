@@ -14,6 +14,7 @@ class Arsip extends Model
     protected $fillable = [
     'user_id',
     'arsip_jenis_id',
+    'keterangan_arsip',
     'nomor_arsip',
     'nama_arsip',
     'file_path',
